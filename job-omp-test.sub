@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH -N 1 # number of nodes
+#SBATCH --exclusive
+#SBATCH --partition=nodo.q
+
+module add gcc/13.2.1
+
+#lscpu
+
+export OMP_NUM_THREADS=12
+
+# SECTIONS (comma-separated)
+FLAGS="$1"  
+
+# FLAGS (comma-separated to -D flags)
+OMP_FLAGS=""
+OMP_SECTIONS=""
+IFS=',' read -ra FLAG_ARRAY <<< "$FLAGS"
+for flag in "${FLAG_ARRAY[@]}"; do
+    OMP_FLAGS="$OMP_FLAGS -D$flag"
+    OMP_SECTIONS="$OMP_SECTIONS $flag"
+done
+
+echo $OMP_SECTIONS
+
+gcc $OMP_FLAGS -Ofast -fopenmp main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec -lm
+
+./exec
