@@ -18,8 +18,8 @@ def read_avg(file_path):
         return tag, avg
 
 def main():
-    tagged_avg = None
-    baseline_avg = None
+    tagged_avgs = []
+    baseline_avgs = []
 
     for filepath in glob.glob(os.path.join(ROOT_DIR, "*.out")):
         result = read_avg(filepath)
@@ -27,18 +27,22 @@ def main():
             continue
         tag, avg = result
         if tag == "X":
-            baseline_avg = avg
+            baseline_avgs.append(avg)
         else:
-            tagged_avg = avg
+            tagged_avgs.append(avg)
 
-    if tagged_avg is None or baseline_avg is None:
-        print("Missing tagged or baseline file.")
+    if not tagged_avgs or not baseline_avgs:
+        print("Missing tagged or baseline files.")
         return
 
-    speedup = baseline_avg / tagged_avg
+    # Compute overall averages
+    avg_tagged = sum(tagged_avgs) / len(tagged_avgs)
+    avg_baseline = sum(baseline_avgs) / len(baseline_avgs)
 
-    print(f"Tagged avg: {tagged_avg:.10f}")
-    print(f"Baseline avg: {baseline_avg:.10f}")
+    speedup = avg_baseline / avg_tagged
+
+    print(f"Tagged avg: {avg_tagged:.10f}")
+    print(f"Baseline avg: {avg_baseline:.10f}")
     print(f"Speedup: {speedup:.6f}")
 
 if __name__ == "__main__":

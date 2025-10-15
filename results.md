@@ -207,5 +207,12 @@ we will average the times with and without parallelization and we will see the s
 
 only with these three tags we have `1.115853` speedup, weird
 
+going back to the for best tags found from [TEST_001](#test_001)
 
+- TRAINING_FORWARD_PROP_LAYERS
+- TRAINING_BACK_PROP_ERRORS
+- TRAINING_BACK_PROP_HIDDEN_LAYERS
+- TRAINING_UPDATE_WEIGHTS_WEIGHTS
+
+we achieve a speedup of `5.039654` with a total of around `2.084183` seconds (including printing)
 
