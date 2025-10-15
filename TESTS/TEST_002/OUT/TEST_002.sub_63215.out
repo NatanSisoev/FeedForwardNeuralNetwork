@@ -1,0 +1,5 @@
+TEST_002
+FORWARD_PROP
+/opt/rh/gcc-toolset-13/root/usr/libexec/gcc/x86_64-redhat-linux/13/ld: exec: final close failed: `handle' de fichero en desuso
+collect2: error: ld returned 1 exit status
+/var/spool/slurmd/job63215/slurm_script: línea 30: ./exec: No existe el fichero o el directorio

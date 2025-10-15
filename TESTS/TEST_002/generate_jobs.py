@@ -18,4 +18,6 @@ print("mkdir -p TESTS/TEST_002/OUT")  # create OUT directory if it doesn't exist
 
 # python3 TESTS/TEST_002/generate_jobs.py > TESTS/TEST_002/jobs.sh
 # bash TESTS/TEST_002/jobs.sh
-# mv TESTS/TEST_002/*.out TESTS/TEST_002/OUT
+
+# CAUTION: it considers all files in OUT, so if you run multiple tests, results will be aggregated
+# echo -e "\n"\# RESULTS \($(date "+%Y-%m-%d %H:%M:%S")\) >> TESTS/TEST_002/results.md && echo \`\`\` >> TESTS/TEST_002/results.md && python3 TESTS/TEST_002/analysis.py >> TESTS/TEST_002/results.md && echo \`\`\` >> TESTS/TEST_002/results.md 

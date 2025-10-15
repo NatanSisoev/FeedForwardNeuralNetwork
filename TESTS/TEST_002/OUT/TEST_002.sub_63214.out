@@ -1,0 +1,5 @@
+TEST_002
+FEED_INPUT
+/opt/rh/gcc-toolset-13/root/usr/libexec/gcc/x86_64-redhat-linux/13/ld: falló el enlace final: `handle' de fichero en desuso
+collect2: error: ld returned 1 exit status
+/var/spool/slurmd/job63214/slurm_script: línea 30: ./exec: No existe el fichero o el directorio
