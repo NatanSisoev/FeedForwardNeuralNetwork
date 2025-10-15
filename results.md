@@ -52,7 +52,7 @@ Smallest time: 2.004625
 
 ## TEST_002
 
-> testing all possible combinations of functions
+> testing all possible combinations of functions (function group tags)
 
 [RESULTS](TESTS/TEST_002/results.md)
 
@@ -122,4 +122,8 @@ None -> 11.127311444444445
 over the 30 iterations, parallelized has made a difference, so for now we will leave it
 
 very small difference between each tag, we can leave both
+
+## TEST_004
+
+> going back to all tags, now we're interested in the individual tags, which provides the best speedup
 
