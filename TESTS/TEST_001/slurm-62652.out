@@ -1,0 +1,3 @@
+TEST_001
+
+/var/spool/slurmd/job62652/slurm_script: línea 29: ./exec: cannot execute binary file: Formato de ejecutable incorrecto

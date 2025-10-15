@@ -1,0 +1,3 @@
+TEST_001
+FEED_INPUT TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_OUTPUT_LAYER
+/var/spool/slurmd/job62682/slurm_script: línea 29: 1799780 Violación de segmento  (`core' generado) ./exec
