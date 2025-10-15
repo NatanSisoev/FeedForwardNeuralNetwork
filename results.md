@@ -129,7 +129,7 @@ very small difference between each tag, we can leave both
 
 so for each parallelization we have to time the exact portion of the code with and without parallelization, so we used `omp_get_wtime`, for example:
 
-```
+```C
 void feed_input(int i) {
     double start = omp_get_wtime();
     #if defined(ALL) || defined(TRAINING) || defined(FEED_INPUT)
@@ -172,4 +172,34 @@ with this information in mind, we can over-optimize the parallelization by only 
 - TRAINING_FORWARD_PROP_LAYERS      :   2.414226
 - TRAINING_BACK_PROP_HIDDEN_LAYERS  :   2.103217
 - TRAINING_UPDATE_WEIGHTS_WEIGHTS   :   1.352390
+
+in the following test we will calculate the speedup using only these three tags
+
+## TEST_005
+
+> calculate the speedup with helpful parallelization only:), which are:
+> - TRAINING_FORWARD_PROP_LAYERS
+> - TRAINING_BACK_PROP_HIDDEN_LAYERS
+> - TRAINING_UPDATE_WEIGHTS_WEIGHTS
+
+for this test we will use the times just like in the [previous test](#test_004)
+
+we dont want other parts of the program to play a role, so we will time the minimum part of the code that includes all 3 parallelizations, which is these three lines in `train_neural_net()`:
+
+````C
+for (int i = 0; i < num_training_patterns; i++) {
+    int p = ranpat[i];
+
+    feed_input(p);
+        
+    double start = omp_get_wtime();
+        forward_prop();
+        back_prop(p);
+        update_weights();
+    double elapsed = omp_get_wtime() - start;
+    printf("%f\n", elapsed);
+}
+```
+
+we will average the times with and without parallelization and we will see the general speedup (of that part)
 
