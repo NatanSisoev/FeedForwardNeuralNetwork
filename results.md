@@ -127,3 +127,23 @@ very small difference between each tag, we can leave both
 
 > going back to all tags, now we're interested in the individual tags, which provides the best speedup
 
+so for each parallelization we have to time the exact portion of the code with and without parallelization, so we used `omp_get_wtime`, for example:
+
+```
+void feed_input(int i) {
+    double start = omp_get_wtime();
+    #if defined(ALL) || defined(TRAINING) || defined(FEED_INPUT)
+    #pragma omp parallel for  // training.feed_input
+    #endif
+    for (int j = 0; j < num_neurons[0]; j++)
+        lay[0].actv[j] = input[i][j];
+    double elapsed = omp_get_wtime() - start;
+    printf("%.16f\n", elapsed);
+}
+```
+
+add a time right before parallelization, and then the end right after
+
+since these functions are being called thousands of times, it wouldn't make sense to leave the timers there for the general program, so we created a new version of `training.c` where we added and removed the times for each test
+
+for each tag (7 in total) we have to time the parallelizable portion with parallelization enabled and disabled

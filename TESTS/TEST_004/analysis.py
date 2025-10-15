@@ -4,44 +4,36 @@ from collections import defaultdict
 
 ROOT_DIR = "TESTS/TEST_004/OUT"
 
-def read_out_file(file_path):
+def read_file_avg(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
         lines = f.read().strip().splitlines()
         if len(lines) < 3:
             return None
+        tag = lines[1].strip()
+        # take all lines from line 2 to the second-to-last line
         try:
-            tags = lines[1].strip()
-            data_lines = [line.strip().split("\t") for line in lines[2:] if "\t" in line]
-            encerts = [int(x[0]) for x in data_lines]
-            times = [float(x[1]) for x in data_lines]
+            numbers = [float(x) for x in lines[2:-1]]
         except ValueError:
             return None
-
-        if any(e != 885 for e in encerts):
-            return None
-
-        avg_time = sum(times) / len(times)
-        return tags, avg_time
+        avg = sum(numbers) / len(numbers)
+        return tag, avg
 
 def main():
-    tag_times = defaultdict(list)
-
+    results = []
     for filepath in glob.glob(os.path.join(ROOT_DIR, "*.out")):
-        result = read_out_file(filepath)
-        if result:
-            tags, avg_time = result
-            tag_times[tags].append(avg_time)
+        data = read_file_avg(filepath)
+        if data:
+            results.append(data)
 
-    if not tag_times:
+    if not results:
         print("No valid data found.")
         return
 
-    tag_avg = {tag: sum(v) / len(v) for tag, v in tag_times.items()}
-    sorted_tags = sorted(tag_avg.items(), key=lambda x: x[1])
+    results.sort(key=lambda x: x[1])
 
-    print("Average times by tag:")
-    for tag, t in sorted_tags:
-        print(f"{tag if tag != 'X' else None} -> {t}")
+    print("Tag averages:")
+    for tag, avg in results:
+        print(f"{tag if tag != 'X' else None} -> {avg:e}")
 
 if __name__ == "__main__":
     main()

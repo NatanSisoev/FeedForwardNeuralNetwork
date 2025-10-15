@@ -12,7 +12,6 @@ export OMP_NUM_THREADS=12
 
 # SECTIONS (comma-separated)
 FLAGS="$1"  
-REPEAT=$2
 
 # FLAGS (comma-separated to -D flags)
 OMP_FLAGS=""
@@ -28,6 +27,4 @@ echo $OMP_SECTIONS
 
 gcc $OMP_FLAGS -Ofast -fopenmp main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec -lm
 
-for i in $(seq 1 $REPEAT); do
-    ./exec
-done
+./exec
