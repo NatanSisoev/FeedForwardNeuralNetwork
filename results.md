@@ -57,10 +57,7 @@
 ---
 
 best so far:
-# TRAINING_FORWARD_PROP_LAYERS
-# TRAINING_BACK_PROP_ERRORS
-# TRAINING_BACK_PROP_HIDDEN_LAYERS
-# UPDATE_WEIGHTS
+TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_ERRORS TRAINING_BACK_PROP_HIDDEN_LAYERS UPDATE_WEIGHTS
 = 2.121777 s
 
 ---
@@ -69,9 +66,26 @@ best so far:
 
 ## TEST_001
 
+> testing all possible parallelization combinations
+
 [RESULTS](TESTS/TEST_001/results.md)
 
+```
 Best tag combination: TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_ERRORS TRAINING_BACK_PROP_HIDDEN_LAYERS TRAINING_UPDATE_WEIGHTS_WEIGHTS
 Smallest time: 2.004625
+```
 
-ERROR: Value conversion error in file: this is because of some errors in execution, hopefully gone in next tests
+`ERROR: Value conversion error in file`: this is because of some errors in execution, hopefully gone in next tests
+
+## TEST_002
+
+> testing all possible combinations of functions
+
+[RESULTS](TESTS/TEST_002/results.md)
+
+```
+Best tag combination: FORWARD_PROP BACK_PROP UPDATE_WEIGHTS
+Smallest time: 3.142874
+```
+
+`ERROR: Value conversion error in file: TESTS/TEST_002/OUT/TEST_002.sub_63161.out`: still error for tags: 'UPDATE_WEIGHTS'

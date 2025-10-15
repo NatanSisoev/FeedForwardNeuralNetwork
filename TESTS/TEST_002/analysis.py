@@ -56,4 +56,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # python3 TESTS/TEST_002/analysis.py > TESTS/TEST_002/results.md
+    # CAUTION: it considers all files in OUT, so if you run multiple tests, results will be aggregated
+
+    # echo \# RESULTS \($(date "+%Y-%m-%d %H:%M:%S")\) >> TESTS/TEST_002/results.md
+    # python3 TESTS/TEST_002/analysis.py >> TESTS/TEST_002/results.md
