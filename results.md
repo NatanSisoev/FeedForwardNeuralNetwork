@@ -1,37 +1,3 @@
-# feed_input
-## sequential
-2,357473123 seconds time elapsed
-2,495234572 seconds time elapsed
-2,303820162 seconds time elapsed
-2,370526786 seconds time elapsed
-2,300920642 seconds time elapsed
-
-2.357473123 + 2.495234572 + 2.303820162 + 2.370526786 + 2.300920642
-
-    = 11.827975285
-
-11.827975285 / 5 = 2.365595057
-
-## parallel
-2,445114370 seconds time elapsed
-2,459992216 seconds time elapsed
-2,458524924 seconds time elapsed
-2,663865484 seconds time elapsed
-2,611471927 seconds time elapsed
-
-2.445114370 + 2.459992216 + 2.458524924 + 2.663865484 + 2.611471927
-
-    = 12.638968921
-
-12.638968921 / 5 = 2.5277937842
-
-# forward_prop_j
-
-## sequential
-## parallel
-
----
-
 # FLAGS
 
 - ALL: all files
@@ -56,9 +22,16 @@
 
 ---
 
-best so far:
-TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_ERRORS TRAINING_BACK_PROP_HIDDEN_LAYERS UPDATE_WEIGHTS
-= 2.121777 s
+# BEST
+
+1. 2.004625
+    
+    `TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_ERRORS TRAINING_BACK_PROP_HIDDEN_LAYERS TRAINING_UPDATE_WEIGHTS_WEIGHTS`
+
+2. 2.121777
+
+    `TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_ERRORS TRAINING_BACK_PROP_HIDDEN_LAYERS UPDATE_WEIGHTS`
+
 
 ---
 
@@ -89,3 +62,11 @@ Smallest time: 3.142874
 ```
 
 `ERROR: Value conversion error in file: TESTS/TEST_002/OUT/TEST_002.sub_63161.out`: still error for tags: 'UPDATE_WEIGHTS'
+
+now i have to check what is the problem with UPDATE_WEIGHTS:
+
+- executed a couple of times, no problems
+- no race conditions found
+- a bit slower than no parallelization
+- conduct TEST_003 for further study
+
