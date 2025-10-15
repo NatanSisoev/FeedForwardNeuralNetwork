@@ -70,3 +70,7 @@ now i have to check what is the problem with UPDATE_WEIGHTS:
 - a bit slower than no parallelization
 - conduct TEST_003 for further study
 
+## TEST_003
+
+> determine parallelization for UPDATE_WEIGHTS: run all combinations of tags `TRAINING_UPDATE_WEIGHTS_BIASES` and `TRAINING_UPDATE_WEIGHTS_WEIGHTS` repeating each one `REPEAT` times
+
