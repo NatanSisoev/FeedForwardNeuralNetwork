@@ -62,3 +62,16 @@ best so far:
 # TRAINING_BACK_PROP_HIDDEN_LAYERS
 # UPDATE_WEIGHTS
 = 2.121777 s
+
+---
+
+# TESTS
+
+## TEST_001
+
+[RESULTS](TESTS/TEST_001/results.md)
+
+Best tag combination: TRAINING_FORWARD_PROP_LAYERS TRAINING_BACK_PROP_ERRORS TRAINING_BACK_PROP_HIDDEN_LAYERS TRAINING_UPDATE_WEIGHTS_WEIGHTS
+Smallest time: 2.004625
+
+ERROR: Value conversion error in file: this is because of some errors in execution, hopefully gone in next tests
