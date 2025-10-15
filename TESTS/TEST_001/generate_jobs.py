@@ -17,6 +17,6 @@ for r in range(len(flags) + 1):
         flag_str = ",".join(combo)
         print(f"sbatch job.sub {flag_str}")
 
-
+print("mv *.out OUT")
 # python3 run_all_flag_combinations.py > all_jobs.sh
 # bash all_jobs.sh
