@@ -205,7 +205,7 @@ we will average the times with and without parallelization and we will see the s
 
 [RESULTS](TESTS/TEST_005/results.md)
 
-only with these three tags we have `1.115853` speedup, weird
+only with these three tags we have `5.471035` speedup, and total time `2.000039` including printing, pretty good
 
 going back to the for best tags found from [TEST_001](#test_001)
 
@@ -215,4 +215,6 @@ going back to the for best tags found from [TEST_001](#test_001)
 - TRAINING_UPDATE_WEIGHTS_WEIGHTS
 
 we achieve a speedup of `5.039654` with a total of around `2.084183` seconds (including printing)
+
+so we see that removing the tag that wasn't helping (`TRAINING_BACK_PROP_ERRORS` had worse speedup < 1) increases the speedup (from `5.039654` to `5.471035`)
 

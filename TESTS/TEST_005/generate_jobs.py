@@ -2,11 +2,9 @@ import itertools
 
 flags = [
     "TRAINING_FORWARD_PROP_LAYERS",
-    "TRAINING_BACK_PROP_ERRORS",
     "TRAINING_BACK_PROP_HIDDEN_LAYERS",
     "TRAINING_UPDATE_WEIGHTS_WEIGHTS"
 ]
-
 
 print(f"sbatch TESTS/TEST_005/TEST_005.sub {','.join(flags)}")
 print(f"sbatch TESTS/TEST_005/TEST_005.sub X")
