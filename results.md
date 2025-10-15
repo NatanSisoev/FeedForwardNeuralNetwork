@@ -147,3 +147,29 @@ add a time right before parallelization, and then the end right after
 since these functions are being called thousands of times, it wouldn't make sense to leave the timers there for the general program, so we created a new version of `training.c` where we added and removed the times for each test
 
 for each tag (7 in total) we have to time the parallelizable portion with parallelization enabled and disabled
+
+once we have the average time of the parallelizable part, we can compute the average speedup, here are the results:
+
+[RESULTS](TESTS/TEST_004/results.md)
+
+```
+Tag speedups (best first):
+TRAINING_FORWARD_PROP_LAYERS -> 2.414226
+TRAINING_BACK_PROP_HIDDEN_LAYERS -> 2.103217
+TRAINING_UPDATE_WEIGHTS_WEIGHTS -> 1.352390
+TRAINING_UPDATE_WEIGHTS_BIASES -> 0.068128
+TRAINING_BACK_PROP_OUTPUT_LAYER -> 0.027382
+FEED_INPUT -> 0.025384
+TRAINING_BACK_PROP_ERRORS -> 0.012050
+```
+
+the best one is TRAINING_FORWARD_PROP_LAYERS which doubles the speed
+
+the worst one is TRAINING_BACK_PROP_ERRORS which is 83 times slower than sequential
+
+with this information in mind, we can over-optimize the parallelization by only including the tags that DO improve speed, which are
+
+- TRAINING_FORWARD_PROP_LAYERS      :   2.414226
+- TRAINING_BACK_PROP_HIDDEN_LAYERS  :   2.103217
+- TRAINING_UPDATE_WEIGHTS_WEIGHTS   :   1.352390
+
