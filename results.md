@@ -197,9 +197,15 @@ for (int i = 0; i < num_training_patterns; i++) {
         back_prop(p);
         update_weights();
     double elapsed = omp_get_wtime() - start;
-    printf("%f\n", elapsed);
+    printf("%.16f\n", elapsed);
 }
 ```
 
-we will average the times with and without parallelization and we will see the general speedup (of that part)
+we will average the times with and without parallelization and we will see the speedup (of that part)
+
+[RESULTS](TESTS/TEST_005/results.md)
+
+only with these three tags we have `1.115853` speedup, weird
+
+
 
