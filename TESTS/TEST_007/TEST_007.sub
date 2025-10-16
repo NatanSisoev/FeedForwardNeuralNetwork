@@ -1,0 +1,38 @@
+#!/bin/bash
+#SBATCH --output=TESTS/TEST_007/OUT/sequential/%x_%j.out
+#SBATCH -N 1 # number of nodes
+#SBATCH --exclusive
+#SBATCH --partition=nodo.q
+
+module add gcc/13.2.1
+
+#lscpu
+
+export OMP_NUM_THREADS=12
+
+N=$1
+
+echo "TEST_007"
+
+#gcc -Ofast -fopenmp -I. TESTS/TEST_007/main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c \
+#    -Icommon -Iconfiguration -Ilayer -Irandomizer -Iinitialize -Itraining \
+#    -o exec -lm
+
+    #-DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_BACK_PROP_HIDDEN_LAYERS -DTRAINING_UPDATE_WEIGHTS_WEIGHTS \
+gcc -Ofast -fopenmp \
+    -I. \
+    TESTS/TEST_007/main.c \
+    common/common.c \
+    configuration/config.c \
+    layer/layer.c \
+    randomizer/randomizer.c \
+    initialize/initialize.c \
+    training/training.c \
+    -o exec -lm
+
+
+
+for i in $(seq 1 $N); do
+    ./exec
+    sleep 1  # to avoid server overload
+done

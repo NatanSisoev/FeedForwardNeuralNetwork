@@ -298,10 +298,89 @@ OPT + FEED_INPUT -> speedup 4.455098
 
 small difference, but over 10 runs we are pretty certain it is somewhat significant
 
+## TEST_007
 
+> for this test we are interested in how the execution time is spread across tasks and various parts of the program
+
+specifically, we want to figure out how much of the time is spent on each of the following parts (percent-wise):
+
+- initialization
+- training
+- testing
+- deconstruction
+
+the initialization and deconstruction of the variables are done outside the timer that is already set, so we will only consider testing and training, which we can split into:
+
+- training
+    - `loading_patterns`
+    - `pattern_shuffle`
+    - for each pattern:
+        - `input_feed`
+        - `forward_propagation`
+        - `backward_propagation`
+        - `weight_update`
+- testing
+    - `loading_patterns`
+    - for each pattern:
+        - `predicting`
+        - `recognition`
+
+
+we print the `omp_get_wtime()` at each place and then calculate the times for each part
+
+[RESULTS](TESTS/TEST_007/results.md)
+
+these are the results over 10 executinos:
+
+```
+forward_propagation      :  4.283941 s ( 42.71%)
+weight_update            :  2.686664 s ( 26.78%)
+backward_propagation     :  2.658612 s ( 26.50%)
+predicting               :  0.209569 s (  2.09%)
+loading_patterns         :  0.056804 s (  0.57%)
+input_feed               :  0.015834 s (  0.16%)
+pattern_shuffle          :  0.000505 s (  0.01%)
+recognition              :  0.000095 s (  0.00%)
+```
+
+so we see that `backward_propagation`, `weight_update` and `input_feed` take the majority of time
+
+
+let's now execute the same program with `OPT` tags toggled and see how that changes the percentatges
+
+notice that parallelization only happens for the parts `forward_propagation`, `backward_propagation` and `weight_update`, so these should drop in percentatge, following amdahls law
+
+```
+forward_propagation      :  1.040508 s ( 50.84%)
+backward_propagation     :  0.423518 s ( 20.69%)
+weight_update            :  0.394067 s ( 19.26%)
+predicting               :  0.050894 s (  2.49%)
+loading_patterns         :  0.037077 s (  1.81%)
+input_feed               :  0.033087 s (  1.62%)
+pattern_shuffle          :  0.000501 s (  0.02%)
+recognition              :  0.000154 s (  0.01%)
+```
+
+we see how the parallelized parts are by far the ones that drop in time
+
+lets look at the speedups of the three parallelized parts
+
+| Phase                  | Original (s) | OPT (s)  | Speedup |
+|------------------------|-------------|----------|---------|
+| forward_propagation     | 4.283941    | 1.040508 | 4.12x   |
+| backward_propagation    | 2.658612    | 0.423518 | 6.28x   |
+| weight_update           | 2.686664    | 0.394067 | 6.82x   |
+
+indeed, we see that they offer a considerable speedup to the overall program, covering more than 90% of the work done (in sequential)
+
+we see that `backward_propagation` and `weight_update` drop in percentatge, as they should since now the non-parallelized part of the program takes more space percentually
+
+nonehtless, `forward_propagation` grows in percentatge: we believe that is due to its speedup being not as high as the other two, so although it should go down in percentatge it doesnt because compared to the others it doesnt drop as much
+
+conclusions:
+
+- we could parallelize the predicting and recognition part but that would, at best, drop the total time `0.01` seconds, which is orders of magnitude lower than the server execution time variability, so in this speciric scenario, with the current size of the neural netweork it makes no sense to further parallelize any other parts (iteration-wise)
+- we think we have parallelized all the parts that were parallelizable at the moment, with the current structure and working of the code
+- further parallelization would be possible if we were allowed to change the structure of the code, like for example "true" pseudo-random initialization for the weights, parallel training then aggregation, and other things
 
 ---
-
-> this test concludes the testing for training.c
-> the only thing remaining is to see if there are any other parallelizable parts (both in tasks and iterations)
-
