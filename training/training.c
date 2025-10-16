@@ -51,7 +51,7 @@ void feed_input(int i) {
  */
 void forward_prop() {
     for (int i = 1; i < num_layers; i++) {
-        #if defined(ALL) || defined(TRAINING) || defined(FORWARD_PROP) || defined(TRAINING_FORWARD_PROP_LAYERS)
+        #if defined(ALL) || defined(TRAINING) || defined(FORWARD_PROP) || defined(TRAINING_FORWARD_PROP_LAYERS) || defined(OPT)
         #pragma omp parallel for  // training.forward_prop.layers
         #endif
         for (int j = 0; j < num_neurons[i]; j++) {
@@ -132,7 +132,7 @@ void back_prop(int p) {
     
     // Hidden Layers
     for (int i = num_layers - 2; i > 0; i--) {
-        #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_HIDDEN_LAYERS)
+        #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_HIDDEN_LAYERS) || defined(OPT)
         #pragma omp parallel for  // training.back_prop.hidden_layers
         #endif
         for (int j = 0; j < num_neurons[i]; j++) {
@@ -157,7 +157,7 @@ void back_prop(int p) {
  */
 void update_weights(void) {
     for (int i = 0; i < num_layers - 1; i++) {
-        #if defined(ALL) || defined(TRAINING) || defined(UPDATE_WEIGHTS) || defined(TRAINING_UPDATE_WEIGHTS_WEIGHTS)
+        #if defined(ALL) || defined(TRAINING) || defined(UPDATE_WEIGHTS) || defined(TRAINING_UPDATE_WEIGHTS_WEIGHTS) || defined(OPT)
         #pragma omp parallel for  // training.update_weights.weights
         #endif
         for (int j = 0; j < num_neurons[i + 1]; j++)
