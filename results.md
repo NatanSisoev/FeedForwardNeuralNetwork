@@ -222,7 +222,9 @@ so we see that removing the tag that wasn't helping (`TRAINING_BACK_PROP_ERRORS`
 
 > going back to the results from [TEST_001](#test_001) to test the average over `N` runs
 
-so we consider the top 5 best combinations from the first test and repeat them `N` times like in
+so we consider the top 5 best combinations from the first test and repeat them `N` times
+
+the top 5 was:
 
 ```
 1. 2.004625
@@ -278,6 +280,23 @@ for (int i = 0; i < num_training_patterns; i++) {
     printf("%.16f\n", elapsed);
 }
 ```
+we will submit 1 job for each tag combination at the same time, then run this multiple times, so to minimize the effects of the server variability: if we first run one combination 10 times then the others, there will be more difference between each combination, whereas if we run them once one after the other and then repeat, there might be more variability between runs but that's ok since it's going to be more or less the same for each tag combination
+
+[RESULTS](TESTS/TEST_006/results.md)
+
+from just 1 run we see that only the 3 tags from `OPT` outperform the others by a big margin, achieving a speedup of `6.082449` compared to the second best, `5.399156`, but it's only one run, so it's not that significant
+
+after 10 runs, we get these results:
+
+```
+OPT -> speedup 5.139883
+OPT + TRAINING_BACK_PROP_ERRORS -> speedup 4.979350
+OPT + TRAINING_BACK_PROP_ERRORS + FEED_INPUT -> speedup 4.734256
+OPT + TRAINING_UPDATE_WEIGHTS_BIASES -> speedup 4.562877
+OPT + FEED_INPUT -> speedup 4.455098
+```
+
+small difference, but over 10 runs we are pretty certain it is somewhat significant
 
 
 

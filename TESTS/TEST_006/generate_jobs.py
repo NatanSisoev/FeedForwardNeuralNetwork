@@ -2,6 +2,7 @@ import itertools
 
 # TOP 5
 flag_combinations = [
+    "X",
     "TRAINING_FORWARD_PROP_LAYERS,TRAINING_BACK_PROP_HIDDEN_LAYERS,TRAINING_UPDATE_WEIGHTS_WEIGHTS,TRAINING_BACK_PROP_ERRORS",
     "TRAINING_FORWARD_PROP_LAYERS,TRAINING_BACK_PROP_HIDDEN_LAYERS,TRAINING_UPDATE_WEIGHTS_WEIGHTS",
     "TRAINING_FORWARD_PROP_LAYERS,TRAINING_BACK_PROP_HIDDEN_LAYERS,TRAINING_UPDATE_WEIGHTS_WEIGHTS,FEED_INPUT",
@@ -13,7 +14,7 @@ flag_combinations = [
 N = 1
 
 for flags in flag_combinations:
-    print(f"sbatch TESTS/TEST_006/TEST_006.sub {flags} {N}", end=" && ")
+    print(f"sbatch TESTS/TEST_006/TEST_006.sub {flags} {N}", end=" && sleep 1 && ")
 
 print("mkdir -p TESTS/TEST_006/OUT")
 
@@ -21,4 +22,5 @@ print("mkdir -p TESTS/TEST_006/OUT")
 # bash TESTS/TEST_006/jobs.sh
 
 # CAUTION: it considers all files in OUT, so if you run multiple tests, results will be aggregated
+# python3 TESTS/TEST_006/analysis.py
 # echo -e "\n"\# RESULTS \($(date "+%Y-%m-%d %H:%M:%S")\) >> TESTS/TEST_006/results.md && echo \`\`\` >> TESTS/TEST_006/results.md && python3 TESTS/TEST_006/analysis.py >> TESTS/TEST_006/results.md && echo \`\`\` >> TESTS/TEST_006/results.md 
