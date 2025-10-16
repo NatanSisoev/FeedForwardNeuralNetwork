@@ -3,22 +3,22 @@
 - ALL: all files
     - TRAINING: training.c
         - FEED_INPUT: feed_input()
-            > training.feed_input
+            - `training.feed_input`
         - FORWARD_PROP: forward_prop()
             - TRAINING_FORWARD_PROP_LAYERS
-                > training.forward_prop.layers
+                - `training.forward_prop.layers`
         - BACK_PROP: back_prop()
             - TRAINING_BACK_PROP_ERRORS
-                > training.back_prop.errors
+                - `training.back_prop.errors`
             - TRAINING_BACK_PROP_OUTPUT_LAYER
-                > training.back_prop.output_layer
+                - `training.back_prop.output_layer`
             - TRAINING_BACK_PROP_HIDDEN_LAYERS
-                > training.back_prop.hidden_layers
+                - `training.back_prop.hidden_layers`
         - UPDATE_WEIGHTS: update_weights()
             - TRAINING_UPDATE_WEIGHTS_WEIGHTS
-                > training.update_weights.weights
+                - `training.update_weights.weights`
             - TRAINING_UPDATE_WEIGHTS_BIASES
-                > training.update_weights.biases
+                - `training.update_weights.biases`
 
 ---
 
@@ -186,7 +186,7 @@ for this test we will use the times just like in the [previous test](#test_004)
 
 we dont want other parts of the program to play a role, so we will time the minimum part of the code that includes all 3 parallelizations, which is these three lines in `train_neural_net()`:
 
-````C
+```C
 for (int i = 0; i < num_training_patterns; i++) {
     int p = ranpat[i];
 
@@ -217,4 +217,72 @@ going back to the for best tags found from [TEST_001](#test_001)
 we achieve a speedup of `5.039654` with a total of around `2.084183` seconds (including printing)
 
 so we see that removing the tag that wasn't helping (`TRAINING_BACK_PROP_ERRORS` had worse speedup < 1) increases the speedup (from `5.039654` to `5.471035`)
+
+## TEST_006
+
+> going back to the results from [TEST_001](#test_001) to test the average over `N` runs
+
+so we consider the top 5 best combinations from the first test and repeat them `N` times like in
+
+```
+1. 2.004625
+    - TRAINING_FORWARD_PROP_LAYERS
+    - TRAINING_BACK_PROP_HIDDEN_LAYERS
+    - TRAINING_UPDATE_WEIGHTS_WEIGHTS
+    - TRAINING_BACK_PROP_ERRORS
+2. 2.049836
+    - TRAINING_FORWARD_PROP_LAYERS
+    - TRAINING_BACK_PROP_HIDDEN_LAYERS
+    - TRAINING_UPDATE_WEIGHTS_WEIGHTS
+3. 2.142863
+    - TRAINING_FORWARD_PROP_LAYERS
+    - TRAINING_BACK_PROP_HIDDEN_LAYERS
+    - TRAINING_UPDATE_WEIGHTS_WEIGHTS
+    - FEED_INPUT
+4. 2.148185
+    - TRAINING_FORWARD_PROP_LAYERS
+    - TRAINING_BACK_PROP_HIDDEN_LAYERS
+    - TRAINING_UPDATE_WEIGHTS_WEIGHTS
+    - TRAINING_BACK_PROP_ERRORS
+    - FEED_INPUT
+5. 2.227651
+    - TRAINING_FORWARD_PROP_LAYERS
+    - TRAINING_BACK_PROP_HIDDEN_LAYERS
+    - TRAINING_UPDATE_WEIGHTS_WEIGHTS
+    - TRAINING_UPDATE_WEIGHTS_BIASES
+```
+
+a couple of observations:
+
+- all 5 combinations include the set `TRAINING_FORWARD_PROP_LAYERS`, `TRAINING_BACK_PROP_HIDDEN_LAYERS`, `TRAINING_UPDATE_WEIGHTS_WEIGHTS` which we name `OPTIMAL`
+- `OPT` set coincides with the parallelization that have speedup > 1 from [TEST_004](#test_004)
+- number 1 and 4 include `TRAINING_BACK_PROP_ERRORS` which has a speedup of `0.012050`, the worst of all of them
+- number 2 includes only `OPT`
+- number 3 and 4 include `FEED_INPUT` with a speedup of `0.025384`
+- number 5 includes `TRAINING_UPDATE_WEIGHTS_BIASES` with a speedup of `0.068128`
+
+it might be confusing that including parallelizations that slow down the execution time (speedup < 1) decreases the overall time (like number 1), but we believe it is a matter of variability, and repeating the test `N` times will average out the results
+
+same as the previous test, we will isoalte the minimal part of the code that uses all parallelization, which is this part (this time including `feed_input(p)`):
+
+```C
+for (int i = 0; i < num_training_patterns; i++) {
+    int p = ranpat[i];
+
+    double start = omp_get_wtime();
+        feed_input(p);
+        forward_prop();
+        back_prop(p);
+        update_weights();
+    double elapsed = omp_get_wtime() - start;
+    printf("%.16f\n", elapsed);
+}
+```
+
+
+
+---
+
+> this test concludes the testing for training.c
+> the only thing remaining is to see if there are any other parallelizable parts (both in tasks and iterations)
 
