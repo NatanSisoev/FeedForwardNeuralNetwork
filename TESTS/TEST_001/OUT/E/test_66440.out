@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 21:10:12
+job_id: 66440
+output_directory: TESTS/TEST_001/OUT/E
+output_file: test_66440.out
+compilation_flags: -DTRAINING_BACK_PROP_ERRORS -DTRAINING_BACK_PROP_HIDDEN_LAYERS -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+885	11.039716
+#END:1

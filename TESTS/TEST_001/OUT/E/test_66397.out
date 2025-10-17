@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 21:09:08
+job_id: 66397
+output_directory: TESTS/TEST_001/OUT/E
+output_file: test_66397.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_BACK_PROP_OUTPUT_LAYER
+number_executions: 1
+---
+#START:1
+885	10.810128
+#END:1

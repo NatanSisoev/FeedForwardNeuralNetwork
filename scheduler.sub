@@ -8,10 +8,11 @@ module add gcc/13.2.1
 export OMP_NUM_THREADS=12
 
 # ARGUMENTS
-TEST_NUM="${1:-000}"                # test number (for output file naming)
-FLAGS_RAW="$2"                      # flags separated by commas
-REPEAT="${3:-1}"                    # number of executions
-SUBFOLDER="$4"                      # subfolder for test files
+TEST_NUM="${1:-000}"                         # test number (for output file naming)
+FLAGS_RAW="$2"                               # flags separated by commas
+REPEAT="${3:-1}"                             # number of executions
+SUBFOLDER="$4"                               # subfolder for test files
+TRAINING_FILE="${5:-training/training.c}"    # training code file
 
 # OUTPUT DIRECTORY
 OUTPUT_DIR="TESTS/TEST_${TEST_NUM}/OUT/$SUBFOLDER"
@@ -40,7 +41,7 @@ gcc -Ofast -fopenmp \
     layer/layer.c \
     randomizer/randomizer.c \
     initialize/initialize.c \
-    training/training.c \
+    $TRAINING_FILE \
     -o exec \
     -lm
 

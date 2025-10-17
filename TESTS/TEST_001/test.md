@@ -82,7 +82,7 @@ In the order of the rows, we see:
 
 All these statistics are given over 100 individual runs, so they have pretty big significance (statistical confidence). More than anything, this goes to show that the server is far too unreliable to test small improvements that don't exceed at least 10% of the total time. This means that, with the current configurations of the neural network, any micro-optimization that scrapes off .05 seconds of the total time is not testable.
 
-For the sake of the server, let's run the script again (only 1 repetition) and see the results (test `B`):
+For the sake of the server, let's run the script 4 more times (only 1 repetition for each run) and see the results (tests `B`, `C`, `D` and `E`):
 
 | #   | avg      | std      | min      | max      | n   | rel_std  | range_ratio | flags                                   |
 |-----|----------|----------|----------|----------|-----|----------|-------------|----------------------------------------|
@@ -92,22 +92,27 @@ For the sake of the server, let's run the script again (only 1 repetition) and s
 | ... | ...      | ...      | ...      | ...      | ... | ...      | ...         | ...                                    |
 | 001 | 1.968112 | 0.000000 | 1.968112 | 1.968112 | 1   | 0.000000 | 1.000000    | `FPL`, `BPH`, `UWB`                    |
 | 002 | 2.032400 | 0.000000 | 2.032400 | 2.032400 | 1   | 0.000000 | 1.000000    | `FPL`, `BPH`, `UWW`                    |
-| 003 | 2.147710 | 0.000000 | 2.147710 | 2.147710 | 1   | 0.000000 | 1.000000    | `FI`, `FPL`, `BPE`, `BPH`, `UWW`      |
+| 003 | 2.147710 | 0.000000 | 2.147710 | 2.147710 | 1   | 0.000000 | 1.000000    | `FI`, `FPL`, `BPE`, `BPH`, `UWW`       |
 | ... | ...      | ...      | ...      | ...      | ... | ...      | ...         | ...                                    |
 | 001 | 2.054270 | 0.000000 | 2.054270 | 2.054270 | 1   | 0.000000 | 1.000000    | `FPL`, `BPE`, `BPH`, `UWW`             |
 | 002 | 2.097778 | 0.000000 | 2.097778 | 2.097778 | 1   | 0.000000 | 1.000000    | `FI`, `FPL`, `BPH`, `UWW`              |
 | 003 | 2.100028 | 0.000000 | 2.100028 | 2.100028 | 1   | 0.000000 | 1.000000    | `FPL`, `BPH`, `UWW`, `UWB`             |
+| ... | ...      | ...      | ...      | ...      | ... | ...      | ...         | ...                                    |
+| 001 | 1.916558 | 0.000000 | 1.916558 | 1.916558 | 1   | 0.000000 | 1.000000    | `FPL`, `BPH`, `UWW`                    |
+| 002 | 2.022203 | 0.000000 | 2.022203 | 2.022203 | 1   | 0.000000 | 1.000000    | `FPL`, `BPO`, `UWB`                    |
+| 003 | 2.032688 | 0.000000 | 2.032688 | 2.032688 | 1   | 0.000000 | 1.000000    | `FPL`, `BPO`, `UWW`                    |
 
 We see that the times we now get are much better than before, going down to 1.97 in one case. Again, it is very clear that the server varaibility plays a very big role in this program.
 
 Nonetheless, notice the frequencies of the tags:
 
-- `FPL`: 9 times
-- `BPH`: 9 times
-- `UWW`: 8 times
-- `BPE`: 3 times
-- `UWB`: 2 times
-- `FI`: 2 times
+- `FPL`: 12 / 12 times
+- `BPH`: 10 / 12 times
+- `UWW`: 10 / 12 times
+- `BPE`: 4 / 12 times
+- `UWB`: 4 / 12 times
+- `FI`:  3 / 12 times
+- `BPO`: 2 / 12 times
 
 We have three clear winners for now: `TRAINING_FORWARD_PROP_LAYERS`, `TRAINING_BACK_PROP_HIDDEN_LAYERS` and `TRAINING_UPDATE_WEIGHTS_WEIGHTS`.
 

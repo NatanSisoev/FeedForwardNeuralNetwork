@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 21:15:06
+job_id: 66461
+output_directory: TESTS/TEST_001/OUT/E
+output_file: test_66461.out
+compilation_flags: -DFEED_INPUT -DTRAINING_BACK_PROP_ERRORS -DTRAINING_UPDATE_WEIGHTS_WEIGHTS -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+885	11.815465
+#END:1
