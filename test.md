@@ -1,22 +1,18 @@
 # TEST_001
 
-## Dependències
-
-- []()
-
-## Objectiu
+## Objective
 
 
 
-## Metodologia
+## Methodology
 
 
 
-## Execució
+## Execution
 
 
 
-## Resultats
+## Results
 
 
 

@@ -1,16 +1,21 @@
 # TEST_001
 
-## Objectiu
+## Objective
 
-L'objectiu principal d'aquest primer test és simplement trobar, de forma bruta, la combinació òptima de les paral·lelitzacions (anomenarem etiquetes). Sabem que no tot `for` paral·lelitzable va més ràpid paral·lelitzat, ja que el simple fet de crear múltiples threads consumeix una estona que potser, en relació al temps total de l'execució seqüencial, no és justificat.
+The primary objective of this initial test is to simply find the optimal combination of parallelizations (which we will call `TAGS`). We will use a brute-force tecnique, simply iterating over the $2^7=128$ permutations and see which one performs better.
 
-## Metodologia
+We know that not all parallelizations are helpful, some tasks are so short that the creation of multiple threads itself takes longer than the actual tasks. That's the reason why we have to filter out some of the parallelizations we've made.
+
+
+## Methodology
 
 Fent servir la llibreria `itertools` de `Python` som capaços de generar fàcilment totes les possibles combinacions d'etiquetes. Les executem fent servir l`scheduler` i analitzem els resultats.
 
-## Execució
+## Execution
 
-To run a new test with default settings, run the following command:
+A `Python` [script](run.py) has been made to carry out this test.
+
+It can be executed from the root folder using [this](../../run_test.py) other script with the following command:
 
 ```bash
 python3 run_test.py 001 [SUBFOLDER, MODE]
@@ -23,7 +28,7 @@ Available options are:
 
 No arguments at all will create a new subfolder named with the first unused upper case letter, where you will find all the `.out` files. Results will be available in [this](results.md) file under the subfolder's header.
 
-## Resultats
+## Results
 
 For our biggest test, we executed each combination 100 times, and then calcualte the average (test `A`). In total, the program ran for almost 4 hours (at night). The following ranking was created:
 
@@ -40,7 +45,6 @@ For our biggest test, we executed each combination 100 times, and then calcualte
 | 126 | 13.147614 | 1.254910 | 10.153961 | 15.535125 | 100 | 0.095448 | 1.529957    | `BPO`                                          |
 | 127 | 13.269134 | 1.221293 | 8.199807  | 16.571745 | 100 | 0.092040 | 2.020992    | `FPL`                                          |
 | 128 | 13.314294 | 1.070659 | 8.201717  | 18.346678 | 100 | 0.080414 | 2.236931    | `FI`, `BPO`, `UWW`                            |
-
 
 For now, very good results. We see that basically all parallelization out-perfmormed the sequential program (but 10 combinations). The top three have achieved a total speedup of around 3.7, which for now is very good.
 
