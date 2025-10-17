@@ -1,0 +1,11 @@
+---
+test_number: 001
+date: 2025-10-17 01:02:54
+output_directory: TESTS/TEST_001/OUT/
+output_file: test_64556.out
+compilation_flags: -DTRAINING_BACK_PROP_ERRORS -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+885	10.307526
+#END:1

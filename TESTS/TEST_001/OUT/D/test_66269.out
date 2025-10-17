@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 15:55:06
+job_id: 66269
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_66269.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_UPDATE_WEIGHTS_WEIGHTS -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+885	8.444949
+#END:1

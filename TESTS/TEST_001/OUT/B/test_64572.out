@@ -1,0 +1,11 @@
+---
+test_number: 001
+date: 2025-10-17 01:01:57
+output_directory: TESTS/TEST_001/OUT/
+output_file: test_64572.out
+compilation_flags: -DFEED_INPUT -DTRAINING_BACK_PROP_OUTPUT_LAYER -DTRAINING_BACK_PROP_HIDDEN_LAYERS
+number_executions: 1
+---
+#START:1
+885	12.369624
+#END:1

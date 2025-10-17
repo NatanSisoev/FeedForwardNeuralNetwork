@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 09:31:19
+job_id: 65021
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_65021.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS
+number_executions: 1
+---
+#START:1
+/var/spool/slurmd/job65021/slurm_script: línea 64: 4105925 Violación de segmento  (`core' generado) ./exec
+#END:1

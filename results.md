@@ -256,7 +256,7 @@ the top 5 was:
 
 a couple of observations:
 
-- all 5 combinations include the set `TRAINING_FORWARD_PROP_LAYERS`, `TRAINING_BACK_PROP_HIDDEN_LAYERS`, `TRAINING_UPDATE_WEIGHTS_WEIGHTS` which we name `OPTIMAL`
+- all 5 combinations include the set `TRAINING_FORWARD_PROP_LAYERS`, `TRAINING_BACK_PROP_HIDDEN_LAYERS`, `TRAINING_UPDATE_WEIGHTS_WEIGHTS` which we name `OPT`
 - `OPT` set coincides with the parallelization that have speedup > 1 from [TEST_004](#test_004)
 - number 1 and 4 include `TRAINING_BACK_PROP_ERRORS` which has a speedup of `0.012050`, the worst of all of them
 - number 2 includes only `OPT`

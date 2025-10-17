@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 15:53:37
+job_id: 66232
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_66232.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_BACK_PROP_HIDDEN_LAYERS
+number_executions: 1
+---
+#START:1
+/var/spool/slurmd/job66232/slurm_script: línea 61: ./exec: No existe el fichero o el directorio
+#END:1

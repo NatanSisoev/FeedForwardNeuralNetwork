@@ -1,0 +1,11 @@
+---
+test_number: 000
+date: 2025-10-17 01:16:04
+output_directory: TESTS/TEST_000/OUT/
+output_file: test_64662.out
+compilation_flags:
+number_executions: 1
+---
+#START:1
+885	10.342462
+#END:1

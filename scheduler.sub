@@ -1,0 +1,64 @@
+#!/bin/bash
+#SBATCH -N 1 # number of nodes
+#SBATCH --exclusive
+#SBATCH --partition=nodo.q
+
+# SETTINGS
+module add gcc/13.2.1
+export OMP_NUM_THREADS=12
+
+# ARGUMENTS
+TEST_NUM="${1:-000}"                # test number (for output file naming)
+FLAGS_RAW="$2"                      # flags separated by commas
+REPEAT="${3:-1}"                    # number of executions
+SUBFOLDER="$4"                      # subfolder for test files
+
+# OUTPUT DIRECTORY
+OUTPUT_DIR="TESTS/TEST_${TEST_NUM}/OUT/$SUBFOLDER"
+OUTPUT_FILE="$OUTPUT_DIR/test_${SLURM_JOB_ID}.out"
+mkdir -p "$OUTPUT_DIR"
+
+# REDIRECT DEFAULT slurm_{SLURM_JOB_ID}.out TO NEW OUPUT
+echo see $OUTPUT_FILE
+
+# CHANGE OUTPUT FILE
+exec > "$OUTPUT_FILE" 2>&1
+
+# FLAGS PARSING
+if [ -n "$FLAGS_RAW" ]; then
+    FLAGS="-D${FLAGS_RAW//,/ -D}"   # replace commas with " -D"
+else
+    FLAGS=""                        # no flags
+fi
+
+# COMPILATION
+gcc -Ofast -fopenmp \
+    $FLAGS \
+    main.c \
+    common/common.c \
+    configuration/config.c \
+    layer/layer.c \
+    randomizer/randomizer.c \
+    initialize/initialize.c \
+    training/training.c \
+    -o exec \
+    -lm
+
+# METADATA
+echo ---
+echo test_number: $TEST_NUM
+echo date: $(date "+%Y-%m-%d %H:%M:%S")
+echo job_id: $SLURM_JOB_ID
+echo output_directory: $OUTPUT_DIR
+echo output_file: test_${SLURM_JOB_ID}.out
+echo compilation_flags: $FLAGS
+echo number_executions: $REPEAT
+echo ---
+
+# EXECUTION
+for ((i=1; i<=REPEAT; i++)); do
+    echo "#START:$i"                # mark start
+    ./exec                          # run executable
+    sleep 0.1                       # avoid server overload
+    echo "#END:$i"                  # mark end
+done

@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 15:54:19
+job_id: 66273
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_66273.out
+compilation_flags: -DTRAINING_BACK_PROP_ERRORS -DTRAINING_BACK_PROP_HIDDEN_LAYERS -DTRAINING_UPDATE_WEIGHTS_WEIGHTS
+number_executions: 1
+---
+#START:1
+885	7.091960
+#END:1
