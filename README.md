@@ -1,3 +1,14 @@
+# BEST TIME
+
+`OPT`: 1.916558 [test_66433.out](TESTS/TEST_001/OUT/E/test_66433.out)
+
+# TESTS
+
+- [TEST_001](TESTS/TEST_001/test.md)
+- [TEST_001](TESTS/TEST_002/test.md)
+- [TEST_001](TESTS/TEST_003/test.md)
+- [TEST_001](TESTS/TEST_004/test.md)
+
 # Explanation
 
 ## tags
@@ -29,4 +40,3 @@ The scheduler takes in 6 arguments:
 4. subfolder: specific subfolder inside `OUT/`
 5. include option for training file to resolve dependencies (relevant for `TEST_002`)
 6. file path of the `training.c` file (relevant for `TEST_002`)
-

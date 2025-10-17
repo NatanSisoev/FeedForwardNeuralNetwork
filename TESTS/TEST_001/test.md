@@ -114,7 +114,7 @@ Nonetheless, notice the frequencies of the tags:
 - `FI`:  3 / 12 times
 - `BPO`: 2 / 12 times
 
-We have three clear winners for now: `TRAINING_FORWARD_PROP_LAYERS`, `TRAINING_BACK_PROP_HIDDEN_LAYERS` and `TRAINING_UPDATE_WEIGHTS_WEIGHTS`.
+We have three clear winners for now: `TRAINING_FORWARD_PROP_LAYERS`, `TRAINING_BACK_PROP_HIDDEN_LAYERS` and `TRAINING_UPDATE_WEIGHTS_WEIGHTS`, which constitute our best time so far (1.916558 s) in the fifth run.
 
 In the following tests we will see if these conclusions are really backed up by the individual speedup of each parallelization.
 
