@@ -38,6 +38,9 @@ parts = sys.argv[2] if len(sys.argv) > 2 else "ea"
 
 # EXECUTION
 if "e" in parts:
+    # FOLDER INFO
+    print(f"Saving output to '{OUTPUT_DIR}' and results to '{RESULTS_FILE}'.")
+
     # ALL FLAGS
     flags = [
         "FEED_INPUT",

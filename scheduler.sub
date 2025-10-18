@@ -13,6 +13,7 @@ FLAGS_RAW="$2"                               # flags separated by commas
 REPEAT="${3:-1}"                             # number of executions
 SUBFOLDER="$4"                               # subfolder for test files
 TRAINING_FILE="${5:-training/training.c}"    # training code file
+CONFIG_FILE="${6:-configuration/configfile.txt}"  # configuration file
 
 # OUTPUT DIRECTORY
 OUTPUT_DIR="TESTS/TEST_${TEST_NUM}/OUT/$SUBFOLDER"
@@ -54,17 +55,17 @@ echo output_directory: $OUTPUT_DIR
 echo output_file: test_${SLURM_JOB_ID}.out
 echo compilation_flags: $FLAGS
 echo number_executions: $REPEAT
-echo server: $(hostname)
+echo server: Wilma
 echo partition_file: $SLURM_JOB_PARTITION
 echo num_threads: $OMP_NUM_THREADS
-echo num_epochs: $(grep -m1 'num_epochs=' configuration/configfile.txt | cut -d'=' -f2)
-echo num_neurons: $(grep 'layer=' configuration/configfile.txt | sed -n '2p' | cut -d'=' -f2)
+echo num_epochs: $(grep -m1 'num_epochs=' $CONFIG_FILE | cut -d'=' -f2)
+echo num_neurons: $(grep 'layer=' $CONFIG_FILE | sed -n '2p' | cut -d'=' -f2)
 echo ---
 
 # EXECUTION
 for ((i=1; i<=REPEAT; i++)); do
     echo "#START:$i"                # mark start
-    ./exec                          # run executable
+    ./exec $CONFIG_FILE             # run executable
     echo "#END:$i"                  # mark end
     sleep 0.1                       # avoid server overload
 done

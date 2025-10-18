@@ -1,0 +1,17 @@
+---
+test_number: 003
+date: 2025-10-18 18:54:24
+job_id: 67295
+output_directory: TESTS/TEST_003/OUT/A
+output_file: test_67295.out
+compilation_flags: -DOPT
+number_executions: 1
+server: Wilma
+partition_file: new-nodo.q
+num_threads: 12
+num_epochs: 100
+num_neurons: 250
+---
+#START:1
+919	11.705240
+#END:1
