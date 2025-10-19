@@ -16,6 +16,8 @@
 
 #include <math.h>
 
+#include <stdio.h>
+
 /**
  * @brief Iniciatlitza la capa incial de la xarxa (input layer) amb l'entrada
  * que volem reconeixer.
@@ -140,7 +142,10 @@ void back_prop(int p) {
 
             for (int k = 0; k < num_neurons[i - 1]; k++) {
                 lay[i - 1].dw[j * num_neurons[i - 1] + k] = lay[i].dz[j] * lay[i - 1].actv[k];
-                if (i > 1) lay[i - 1].dactv[k] += lay[i - 1].out_weights[j * num_neurons[i - 1] + k] * lay[i].dz[j];
+                if (i > 1) {
+                    #pragma omp critical
+                    lay[i - 1].dactv[k] += lay[i - 1].out_weights[j * num_neurons[i - 1] + k] * lay[i].dz[j];
+                }
             }
 
             lay[i].dbias[j] = lay[i].dz[j];
