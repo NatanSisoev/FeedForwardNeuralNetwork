@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 09:31:51
+job_id: 65047
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_65047.out
+compilation_flags: -DTRAINING_UPDATE_WEIGHTS_WEIGHTS -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+885	10.913533
+#END:1

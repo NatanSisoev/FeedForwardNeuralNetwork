@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 21:12:00
+job_id: 66398
+output_directory: TESTS/TEST_001/OUT/E
+output_file: test_66398.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_BACK_PROP_HIDDEN_LAYERS
+number_executions: 1
+---
+#START:1
+885	8.164190
+#END:1

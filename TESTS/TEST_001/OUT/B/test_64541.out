@@ -1,0 +1,11 @@
+---
+test_number: 001
+date: 2025-10-17 01:04:14
+output_directory: TESTS/TEST_001/OUT/
+output_file: test_64541.out
+compilation_flags: -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+885	13.026684
+#END:1

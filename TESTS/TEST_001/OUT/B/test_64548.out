@@ -1,0 +1,11 @@
+---
+test_number: 001
+date: 2025-10-17 01:00:07
+output_directory: TESTS/TEST_001/OUT/
+output_file: test_64548.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_BACK_PROP_ERRORS
+number_executions: 1
+---
+#START:1
+885	13.358247
+#END:1

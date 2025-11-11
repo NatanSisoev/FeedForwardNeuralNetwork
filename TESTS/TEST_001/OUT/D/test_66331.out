@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 15:53:41
+job_id: 66331
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_66331.out
+compilation_flags: -DTRAINING_FORWARD_PROP_LAYERS -DTRAINING_BACK_PROP_ERRORS -DTRAINING_BACK_PROP_OUTPUT_LAYER -DTRAINING_BACK_PROP_HIDDEN_LAYERS -DTRAINING_UPDATE_WEIGHTS_BIASES
+number_executions: 1
+---
+#START:1
+/var/spool/slurmd/job66331/slurm_script: línea 64: 1168626 Violación de segmento  ./exec
+#END:1

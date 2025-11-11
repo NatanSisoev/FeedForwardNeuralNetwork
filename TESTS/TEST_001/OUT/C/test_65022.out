@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 09:29:53
+job_id: 65022
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_65022.out
+compilation_flags: -DTRAINING_BACK_PROP_ERRORS
+number_executions: 1
+---
+#START:1
+885	11.467049
+#END:1

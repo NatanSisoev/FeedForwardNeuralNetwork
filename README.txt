@@ -62,9 +62,9 @@ dataset_test_path=datasets/optdigits/optdigits.cv
 DEBUGGING:
 
 Com que estem treballant amb C si volem fer debugging per veure on falla el nostre codi pot ser molt complicat, sobretot
-perque les eines que existeixen com valgrind i altres no son molt trivials d'utilitzar
+perque les eines que existeixen com valgrind i altres no són molt trivials d'utilitzar
 
-Per aixó hem fet un mètode senzill de debugging basat en unna variable en l'arxiu configfile.txt
+Per això hem fet un mètode senzill de debugging basat en unna variable en l'arxiu configfile.txt
 
 debug != 1 -> No esta activat el mode debug
 debug == 1 -> Esta activat el mode debug
@@ -77,7 +77,7 @@ Es poden afegir més punts de debug obviament. Simplement cal afegir un if() amb
 if(debug == 1)
   printf("Print Something");
   
-Es recomana seguir aquesta sintaxis per mantenir el codi consistent i poder distingir per a que es cada printf()
+Es recomana seguir aquesta sintaxis per mantenir el codi consistent i poder distingir per a que és cada printf()
 També permet desactivar-los en qualsevol moment canviant el valor de debug!!!
 
 ---------------------------------------------------------------------------------------------------------------------------------

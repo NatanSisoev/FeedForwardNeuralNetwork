@@ -1,0 +1,11 @@
+---
+test_number: 001
+date: 2025-10-17 01:01:35
+output_directory: TESTS/TEST_001/OUT/
+output_file: test_64611.out
+compilation_flags: -DFEED_INPUT -DTRAINING_BACK_PROP_ERRORS -DTRAINING_BACK_PROP_HIDDEN_LAYERS -DTRAINING_UPDATE_WEIGHTS_WEIGHTS
+number_executions: 1
+---
+#START:1
+885	7.362256
+#END:1

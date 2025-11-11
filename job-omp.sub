@@ -9,7 +9,7 @@ module add gcc/13.2.1
 
 export OMP_NUM_THREADS=12
 
-gcc -Ofast -fopenmp main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec -lm
+gcc -DOPT -Ofast -fopenmp main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec -lm
 
 #./exec
 

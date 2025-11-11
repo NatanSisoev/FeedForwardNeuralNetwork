@@ -65,7 +65,7 @@ void printRecognized(int p, layer Output) {
  *
  */
 void train_neural_net() {
-    printf("\nTraining...\n");
+    // printf("\nTraining...\n");
 
     if ((input = loadPatternSet(num_training_patterns, dataset_training_path,
                                 1)) == NULL) {
@@ -105,7 +105,7 @@ void train_neural_net() {
 void test_nn() {
     char** rSet;
 
-    printf("\nTesting...\n");
+    // printf("\nTesting...\n");
 
     if ((rSet = loadPatternSet(num_test_patterns, dataset_test_path, 0)) ==
         NULL) {
@@ -121,7 +121,8 @@ void test_nn() {
         printRecognized(i, lay[num_layers - 1]);
     }
 
-    printf("\nTotal encerts = %d\n", total);
+    // printf("\nTotal encerts = %d\n", total);
+    printf("%d\t", total);
     freeInput(num_test_patterns, rSet);
 }
 
@@ -169,7 +170,8 @@ int main(int argc, char** argv) {
 
     free(cost);
 
-    printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
+    // printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
+    printf("%f\n", elapsed);
 
     return 0;
 }

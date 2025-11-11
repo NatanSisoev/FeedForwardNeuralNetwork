@@ -1,0 +1,12 @@
+---
+test_number: 001
+date: 2025-10-17 09:34:08
+job_id: 65099
+output_directory: TESTS/TEST_001/OUT/D
+output_file: test_65099.out
+compilation_flags: -DFEED_INPUT -DTRAINING_BACK_PROP_OUTPUT_LAYER -DTRAINING_BACK_PROP_HIDDEN_LAYERS -DTRAINING_UPDATE_WEIGHTS_WEIGHTS
+number_executions: 1
+---
+#START:1
+885	8.132674
+#END:1
