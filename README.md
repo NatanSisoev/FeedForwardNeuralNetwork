@@ -123,7 +123,7 @@ The scheduler file takes in 6 arguments:
 6. configuration file: path to the `configfile.txt` file (relevant for `TEST_003`)
 6. file path of the `training.c` file (relevant for `TEST_002`)
 
-It always redirects the ouput of the code to files inside each `OUT` folder in each test. Nonetheless, it always leaves a "see [...]" note in the default slurm file pointing to the right location. ALl the flags are parsed and given to the compiler.
+It always redirects the ouput of the code to files inside each `OUT` folder in each test. Nonetheless, it always leaves a "see [...]" note in the default slurm file pointing to the right location. All the flags are parsed and given to the compiler.
 
 ## Output files
 
@@ -144,7 +144,7 @@ For each job, the output file contains custom metadata with all the information 
 - `num_epochs`: number of epochs
 - `num_neurons`: number of neurons in the hidden layer
 
-After the metadata, each execution is marked with `#START:id` at the start and `#END:id` at the end, where `id` is the index of the executino. This way, if we execute the code multiple times we know exactly where does each output come from. In between these two comments, we have all the program's output.
+After the metadata, each execution is marked with `#START:id` at the start and `#END:id` at the end, where `id` is the index of the execution. This way, if we execute the code multiple times we know exactly where does each output come from. In between these two comments, we have all the program's output.
 
 # Conclusions
 

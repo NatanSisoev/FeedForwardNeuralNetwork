@@ -10,7 +10,7 @@ With this test, we will be able to determine each individual speedup and see if 
 
 Since the server has so much varaibility, we will only time the minimal part of the code that includes the parallelization. We will use the `OMP` function `omp_get_wtime()` to time each `for` with and without parallelization and then calculate the speedup.
 
-We do not want to change the existing files, we want to make this tes reproducible without having to alter the codebase each time. Therefore, we will copy the `training/training.c` file to this folder, [training.c](training.c), and we will pass a flag to the `scheduler.sub` to consider this file instead of the main one.
+We do not want to change the existing files, we want to make this test reproducible without having to alter the codebase each time. Therefore, we will copy the `training/training.c` file to this folder, [training.c](training.c), and we will pass a flag to the `scheduler.sub` to consider this file instead of the main one.
 
 Take, for example, the `FEED_INPUT` tag. We would time this parallelization in the following manner:
 
@@ -26,13 +26,13 @@ void feed_input(int i) {
 }
 ```
 
-From the output, we are able to sum up all the times and determine the speedups. For now, efficiency is not relevant (just devide by 12), since it becomes important only when comparing to different number of threads, which we will do in the following tests). From there we will see which ones are worth including in the final version of the code.
+From the output, we are able to sum up all the times and determine the speedups. For now, efficiency is not relevant (just divide by 12), since it becomes important only when comparing to different number of threads, which we will do in the following tests. From there we will see which ones are worth including in the final version of the code.
 
 ## Execution
 
 As before, we've created a `Python` [script](run.py) that, this time, simply runs the code with and without all the tags.
 
-After execution, it interprets the results and saves the relevant metrics, such as speedup and efficienciy.
+After execution, it interprets the results and saves the relevant metrics, such as speedup and efficiency.
 
 It can be executed from the root folder using [this](../../run_test.py) other script with the following command:
 
