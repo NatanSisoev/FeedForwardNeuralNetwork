@@ -52,21 +52,36 @@ void feed_input(int i) {
  *
  */
 void forward_prop() {
+    #if defined(OPENACC)
+    #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers])
+    {
+    #endif
     for (int i = 1; i < num_layers; i++) {
         #if defined(ALL) || defined(TRAINING) || defined(FORWARD_PROP) || defined(TRAINING_FORWARD_PROP_LAYERS) || defined(OPT)
+        #if defined(OPENMP)
         #pragma omp parallel for  // training.forward_prop.layers
+        #elif defined(OPENACC)
+        #pragma acc parallel loop gang vector  // training.forward_prop.layers
+        #endif
         #endif
         for (int j = 0; j < num_neurons[i]; j++) {
             lay[i].z[j] = lay[i].bias[j];
+            
+            #if defined(OPENACC)
+            #pragma acc loop seq
+            #endif
             for (int k = 0; k < num_neurons[i - 1]; k++)
                 lay[i].z[j] += ((lay[i - 1].out_weights[j * num_neurons[i - 1] + k]) * (lay[i - 1].actv[k]));
 
             if (i < num_layers - 1)
                 lay[i].actv[j] = ((lay[i].z[j]) < 0) ? 0 : lay[i].z[j];
             else
-                lay[i].actv[j] = 1 / (1 + exp(-lay[i].z[j]));
+                lay[i].actv[j] = 1.0 / (1.0 + exp(-lay[i].z[j]));
         }
     }
+    #if defined(OPENACC)
+    }
+    #endif
 }
 
 /**
@@ -90,6 +105,11 @@ void forward_prop() {
  *
  */
 void back_prop(int p) {
+    #if defined(OPENACC)
+    #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers], desired_outputs[0:num_out_layer])
+    {
+    #endif
+    
     // Output Layer
     /*
     Càlcul de l'error local (δ_j) a la capa de sortida
@@ -107,13 +127,25 @@ void back_prop(int p) {
     # ∂E/∂b_j =  ∂E/∂z_j * ∂z_j/∂b_j = ∂E/∂z_j = δ_j
     */
     #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_ERRORS)
+    #if defined(OPENMP)
     #pragma omp parallel for  // training.back_prop.errors
+    #elif defined(OPENACC)
+    #pragma acc parallel loop gang vector
+    #endif
     #endif
     for (int j = 0; j < num_neurons[num_layers - 1]; j++) {
         lay[num_layers - 1].dz[j] =
             (lay[num_layers - 1].actv[j] - desired_outputs[p][j]) *
-            (lay[num_layers - 1].actv[j]) * (1 - lay[num_layers - 1].actv[j]);
+            (lay[num_layers - 1].actv[j]) * (1.0 - lay[num_layers - 1].actv[j]);
         lay[num_layers - 1].dbias[j] = lay[num_layers - 1].dz[j];
+    }
+
+    // Inicialitzar dactv de l'última capa oculta a zero
+    #if defined(OPENACC)
+    #pragma acc parallel loop gang vector
+    #endif
+    for (int k = 0; k < num_neurons[num_layers - 2]; k++) {
+        lay[num_layers - 2].dactv[k] = 0.0;
     }
 
     // Calcula els gradients dels pesos de l'última capa oculta cap a la capa de sortida:
@@ -122,28 +154,68 @@ void back_prop(int p) {
     //   dactv[k] = w_kj[] * dz[j],
     // que després servirà per calcular dz de les neurones ocultes
     
+    #if defined(OPENACC)
+    #pragma acc parallel loop collapse(2) gang vector
+    for (int j = 0; j < num_neurons[num_layers - 1]; j++) {
+        for (int k = 0; k < num_neurons[num_layers - 2]; k++) {
+            lay[num_layers - 2].dw[j * num_neurons[num_layers - 2] + k] = 
+                lay[num_layers - 1].dz[j] * lay[num_layers - 2].actv[k];
+            
+            #pragma acc atomic update
+            lay[num_layers - 2].dactv[k] += 
+                lay[num_layers - 2].out_weights[j * num_neurons[num_layers - 2] + k] * 
+                lay[num_layers - 1].dz[j];
+        }
+    }
+    #else
     for (int j = 0; j < num_neurons[num_layers - 1]; j++) {
         #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_OUTPUT_LAYER)
+        #if defined(OPENMP)
         #pragma omp parallel for  // training.back_prop.output_layer
+        #endif
         #endif
         for (int k = 0; k < num_neurons[num_layers - 2]; k++) {
             lay[num_layers - 2].dw[j * num_neurons[num_layers - 2] + k] = (lay[num_layers - 1].dz[j] * lay[num_layers - 2].actv[k]);
             lay[num_layers - 2].dactv[k] = lay[num_layers - 2].out_weights[j * num_neurons[num_layers - 2] + k] * lay[num_layers - 1].dz[j];
         }
     }
+    #endif
     
     // Hidden Layers
     for (int i = num_layers - 2; i > 0; i--) {
+        // Inicialitzar dactv de la capa anterior si no és la capa d'entrada
+        #if defined(OPENACC)
+        if (i > 1) {
+            #pragma acc parallel loop gang vector
+            for (int k = 0; k < num_neurons[i - 1]; k++) {
+                lay[i - 1].dactv[k] = 0.0;
+            }
+        }
+        #endif
+        
         #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_HIDDEN_LAYERS) || defined(OPT)
+        #if defined(OPENMP)
         #pragma omp parallel for  // training.back_prop.hidden_layers
+        #elif defined(OPENACC)
+        #pragma acc parallel loop gang vector  // training.back_prop.hidden_layers
+        #endif
         #endif
         for (int j = 0; j < num_neurons[i]; j++) {
-            lay[i].dz[j] = (lay[i].z[j] >= 0) ? lay[i].dactv[j] : 0;
+            lay[i].dz[j] = (lay[i].z[j] >= 0) ? lay[i].dactv[j] : 0.0;
 
+            #if defined(OPENACC)
+            #pragma acc loop seq
+            #endif
             for (int k = 0; k < num_neurons[i - 1]; k++) {
                 lay[i - 1].dw[j * num_neurons[i - 1] + k] = lay[i].dz[j] * lay[i - 1].actv[k];
                 if (i > 1) {
+                    #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_HIDDEN_LAYERS) || defined(OPT)
+                    #if defined(OPENMP)
                     #pragma omp critical
+                    #elif defined(OPENACC)
+                    #pragma acc atomic update
+                    #endif
+                    #endif
                     lay[i - 1].dactv[k] += lay[i - 1].out_weights[j * num_neurons[i - 1] + k] * lay[i].dz[j];
                 }
             }
@@ -151,6 +223,10 @@ void back_prop(int p) {
             lay[i].dbias[j] = lay[i].dz[j];
         }
     }
+    
+    #if defined(OPENACC)
+    }
+    #endif
 }
 
 /**
@@ -161,18 +237,33 @@ void back_prop(int p) {
  * @see back_prop
  */
 void update_weights(void) {
+    #if defined(OPENACC)
+    #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers], alpha)
+    {
+    #endif
     for (int i = 0; i < num_layers - 1; i++) {
         #if defined(ALL) || defined(TRAINING) || defined(UPDATE_WEIGHTS) || defined(TRAINING_UPDATE_WEIGHTS_WEIGHTS) || defined(OPT)
+        #if defined(OPENMP)
         #pragma omp parallel for  // training.update_weights.weights
+        #elif defined(OPENACC)
+        #pragma acc parallel loop collapse(2) gang vector  // training.update_weights.weights
+        #endif
         #endif
         for (int j = 0; j < num_neurons[i + 1]; j++)
             for (int k = 0; k < num_neurons[i]; k++)  // Update Weights
                 lay[i].out_weights[j * num_neurons[i] + k] = lay[i].out_weights[j * num_neurons[i] + k] - alpha * lay[i].dw[j * num_neurons[i] + k];
 
         #if defined(ALL) || defined(TRAINING) || defined(UPDATE_WEIGHTS) || defined(TRAINING_UPDATE_WEIGHTS_BIASES)
+        #if defined(OPENMP)
         #pragma omp parallel for  // training.update_weights.biases
+        #elif defined(OPENACC)
+        #pragma acc parallel loop gang vector  // training.update_weights.biases
         #endif
-        for (int j = 0; j < num_neurons[i]; j++)  // Update Bias
-            lay[i].bias[j] = lay[i].bias[j] - (alpha * lay[i].dbias[j]);
+        #endif
+        for (int j = 0; j < num_neurons[i + 1]; j++)  // Update Bias
+            lay[i + 1].bias[j] = lay[i + 1].bias[j] - (alpha * lay[i + 1].dbias[j]);
     }
+    #if defined(OPENACC)
+    }
+    #endif
 }
