@@ -1,10 +1,18 @@
 #!/bin/bash
+#SBATCH --job-name=GPU
 #SBATCH -N 1 # number of nodes
+#SBATCH -n 1 # number of cores
 #SBATCH --exclusive
-#SBATCH --partition=nodo.q
+#SBATCH --partition=cuda-ext.q
+
+#SBATCH --gres=gpu:GeForceRTX3080:1
+#SBATCH -o OUT/out-%j.out
+#SBATCH -e OUT/err-%j.out
 
 # SETTINGS
 module add gcc/13.2.1
+module load nvhpc/21.2
+
 export OMP_NUM_THREADS=12
 
 # ARGUMENTS
@@ -21,10 +29,10 @@ OUTPUT_FILE="$OUTPUT_DIR/test_${SLURM_JOB_ID}.out"
 mkdir -p "$OUTPUT_DIR"
 
 # REDIRECT DEFAULT slurm_{SLURM_JOB_ID}.out TO NEW OUPUT
-echo see $OUTPUT_FILE
+#echo see $OUTPUT_FILE
 
 # CHANGE OUTPUT FILE
-exec > "$OUTPUT_FILE" 2>&1
+#exec > "$OUTPUT_FILE" 2>&1
 
 # FLAGS PARSING
 if [ -n "$FLAGS_RAW" ]; then
@@ -33,8 +41,15 @@ else
     FLAGS=""                        # no flags
 fi
 
+# watch -n 0.1 squeue
+# rm -f exec *.o *.out *.qdrep *.sqlite out
+
 # COMPILATION
-gcc -Ofast -fopenmp \
+#    -acc=gpu -Minfo=all \
+#    -DOPENACC -DOPT \
+nvc -O3 \
+    -acc=gpu -Minfo=all \
+    -DOPENACC -DOPT \
     $FLAGS \
     main.c \
     common/common.c \
@@ -55,7 +70,7 @@ echo output_directory: $OUTPUT_DIR
 echo output_file: test_${SLURM_JOB_ID}.out
 echo compilation_flags: $FLAGS
 echo number_executions: $REPEAT
-echo server: Wilma
+echo server: Aolin
 echo partition_file: $SLURM_JOB_PARTITION
 echo num_threads: $OMP_NUM_THREADS
 echo num_epochs: $(grep -m1 'num_epochs=' $CONFIG_FILE | cut -d'=' -f2)
@@ -65,7 +80,8 @@ echo ---
 # EXECUTION
 for ((i=1; i<=REPEAT; i++)); do
     echo "#START:$i"                # mark start
-    ./exec $CONFIG_FILE             # run executable
+    #./exec $CONFIG_FILE
+    #nsys profile -f true -t nvtx,cuda -o profile.nsys-rep ./exec $CONFIG_FILE
+    nsys nvprof --print-gpu-trace ./exec $CONFIG_FILE
     echo "#END:$i"                  # mark end
-    sleep 0.1                       # avoid server overload
 done

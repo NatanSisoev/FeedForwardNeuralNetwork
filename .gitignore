@@ -3,3 +3,5 @@
 !TESTS/**/*.out
 *.o
 exec
+*.sqlite
+*.qdrep

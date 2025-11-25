@@ -7,20 +7,23 @@
 #SBATCH --partition=cuda-ext.q
 ## GPUs are available on aolin cluster
 #SBATCH --gres=gpu:GeForceRTX3080:1
-#SBATCH -o out.out
-#SBATCH -e err.out
+#SBATCH -o OUT/out-%j.out
+#SBATCH -e OUT/err-%j.out
 
 
 module load nvhpc/21.2
 nvidia-smi
 
 #gcc -Ofast main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec -lm 
-nvc -O3 -acc=gpu -Minfo=all main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec  #-DOPENACC -DOPT
+nvc -O3 -acc=gpu -Minfo=all \
+    -DOPENACC -DOPT \
+    main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c \
+    -o exec
 
-./exec
+#./exec
 
 # Profiling:
-#nsys nvprof --print-gpu-trace ./exec #summary 
+nsys nvprof --print-gpu-trace ./exec #summary 
 #ncu --target-processes application-only --set full -f -o profile.ncu-rep ./exec
 
 #Visualize profiling:

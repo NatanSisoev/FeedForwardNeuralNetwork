@@ -22,6 +22,12 @@ Otherwise, it will run the sequential version. You can "turn on" any optimizatio
 
 You can make use of the [scheduler](#scheduler) for more advances runs, or even out custom testing scripts explained [here](#tests).
 
+To copy files from ssh to local run (from local terminal):
+
+```
+scp -P 54022 capmc-1@aolin-login.uab.es:/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/profile.nsys-rep.qdrep .
+```
+
 # Preliminaries
 
 Loops/tasks: we've seen that the program is quite straighforward sequential task-wise, so we have not spotted any options for paralellelization task-wise. As we will discuss in the following point, the most demanding part of the code (which is training) is the one we have paralellized and it's the only one that really matters.
