@@ -73,14 +73,6 @@ void train_neural_net() {
         exit(-1);
     }
 
-    #if defined(OPENACC_COPY)
-    #pragma acc enter data copyin(input[0:num_training_patterns])
-    for (int r = 0; r < num_training_patterns; r++) {
-        int n = num_neurons[0];
-        #pragma acc enter data copyin(input[r][0:n])
-    }
-    #endif
-
     int ranpat[num_training_patterns];
 
     // Gradient Descent
@@ -101,7 +93,7 @@ void train_neural_net() {
             int p = ranpat[i];
 
             feed_input(p);
-            #if defined(OPENACC_COPY)
+            #if defined(OPENACC)
             int n = num_neurons[0];
             #pragma acc update device(lay[0].actv[0:n])
             #endif
@@ -110,14 +102,6 @@ void train_neural_net() {
             update_weights();
         }
     }
-
-    #if defined(OPENACC_COPY)
-    for (int r = 0; r < num_training_patterns; r++) {
-        int n = num_neurons[0];
-        #pragma acc exit data delete(input[r][0:n])
-    }
-    #pragma acc exit data delete(input[0:num_training_patterns])
-    #endif
 
     freeInput(num_training_patterns, input);
 }
@@ -134,41 +118,17 @@ void test_nn() {
         exit(-1);
     }
 
-    #if defined(OPENACC_COPY)
-    #pragma acc enter data copyin(rSet[0:num_test_patterns])
-    for (int r = 0; r < num_test_patterns; r++) {
-        int n = num_neurons[0];
-        #pragma acc enter data copyin(rSet[r][0:n])
-    }
-    #endif
-
     for (int i = 0; i < num_test_patterns; i++) {
         for (int j = 0; j < num_neurons[0]; j++)
             lay[0].actv[j] = rSet[i][j];
 
-        #if defined(OPENACC_COPY)
-        int n = num_neurons[0];
-        #pragma acc update device(lay[0].actv[0:n])
-        #endif
-        
         forward_prop();
-
-        #if defined(OPENACC_COPY)
-        #pragma acc update host(lay[num_layers - 1].actv[0:num_neurons[num_layers - 1]])
-        #endif
 
         printRecognized(i, lay[num_layers - 1]);
     }
 
     // printf("\nTotal encerts = %d\n", total);
     printf("%d\t", total);
-
-    #if defined(OPENACC_COPY)
-    for (int r = 0; r < num_test_patterns; r++) {
-        #pragma acc exit data delete(rSet[r][0:num_neurons[0]])
-    }
-    #pragma acc exit data delete(rSet[0:num_test_patterns])
-    #endif
 
     freeInput(num_test_patterns, rSet);
 }
@@ -196,33 +156,28 @@ int main(int argc, char** argv) {
 
     cost = (float*)malloc(num_neurons[num_layers - 1] * sizeof(float));
 
-    #if defined(OPENACC) || defined(OPT)
-    // Copiar dades escalars i arrays bàsics al dispositiu
+    #if defined(OPENACC)
     #pragma acc enter data copyin(alpha, num_out_layer, num_layers)
     #pragma acc enter data copyin(num_neurons[0:num_layers])
     #pragma acc enter data copyin(desired_outputs[0:num_out_layer])
-    
-    // Copiar arrays de desired_outputs
     for (int i = 0; i < num_out_layer; i++) {
         #pragma acc enter data copyin(desired_outputs[i][0:num_out_layer])
     }
-    
-    // Copiar l'estructura lay
     #pragma acc enter data copyin(lay[0:num_layers])
-    
-    // Copiar els arrays de cada capa
     for (int i = 0; i < num_layers; i++) {
-        #pragma acc enter data copyin(lay[i].actv[0:num_neurons[i]])
-        #pragma acc enter data copyin(lay[i].bias[0:num_neurons[i]])
-        #pragma acc enter data copyin(lay[i].z[0:num_neurons[i]])
-        #pragma acc enter data create(lay[i].dactv[0:num_neurons[i]])
-        #pragma acc enter data create(lay[i].dbias[0:num_neurons[i]])
-        #pragma acc enter data create(lay[i].dz[0:num_neurons[i]])
-        
+        int n = num_neurons[i];
+
+        #pragma acc enter data copyin(lay[i].actv[0:n])
+        #pragma acc enter data copyin(lay[i].bias[0:n])
+        #pragma acc enter data copyin(lay[i].z[0:n])
+        #pragma acc enter data create(lay[i].dactv[0:n])
+        #pragma acc enter data create(lay[i].dbias[0:n])
+        #pragma acc enter data create(lay[i].dz[0:n])
+
         if (i < num_layers - 1) {
-            long ow_size = (long)num_neurons[i + 1] * (long)num_neurons[i];
-            #pragma acc enter data copyin(lay[i].out_weights[0:ow_size])
-            #pragma acc enter data create(lay[i].dw[0:ow_size])
+            long ow = (long)num_neurons[i+1] * (long)num_neurons[i];
+            #pragma acc enter data copyin(lay[i].out_weights[0:ow])
+            #pragma acc enter data create(lay[i].dw[0:ow])
         }
     }
     #endif
@@ -243,8 +198,7 @@ int main(int argc, char** argv) {
     long microseconds = end.tv_usec - begin.tv_usec;
     double elapsed = seconds + microseconds * 1e-6;
 
-    #if defined(OPENACC) || defined(OPT)
-    // Alliberar memòria del dispositiu
+    #if defined(OPENACC)
     for (int i = 0; i < num_layers; i++) {
         #pragma acc exit data delete(lay[i].actv[0:num_neurons[i]])
         #pragma acc exit data delete(lay[i].bias[0:num_neurons[i]])
@@ -252,20 +206,17 @@ int main(int argc, char** argv) {
         #pragma acc exit data delete(lay[i].dactv[0:num_neurons[i]])
         #pragma acc exit data delete(lay[i].dbias[0:num_neurons[i]])
         #pragma acc exit data delete(lay[i].dz[0:num_neurons[i]])
-        
+
         if (i < num_layers - 1) {
-            long ow_size = (long)num_neurons[i + 1] * (long)num_neurons[i];
-            #pragma acc exit data delete(lay[i].out_weights[0:ow_size])
-            #pragma acc exit data delete(lay[i].dw[0:ow_size])
+            long ow = (long)num_neurons[i+1] * (long)num_neurons[i];
+            #pragma acc exit data delete(lay[i].out_weights[0:ow])
+            #pragma acc exit data delete(lay[i].dw[0:ow])
         }
     }
-    
     #pragma acc exit data delete(lay[0:num_layers])
-    
     for (int i = 0; i < num_out_layer; i++) {
         #pragma acc exit data delete(desired_outputs[i][0:num_out_layer])
     }
-    
     #pragma acc exit data delete(desired_outputs[0:num_out_layer])
     #pragma acc exit data delete(num_neurons[0:num_layers])
     #pragma acc exit data delete(alpha, num_out_layer, num_layers)

@@ -68,7 +68,7 @@ echo date: $(date "+%Y-%m-%d %H:%M:%S")
 echo job_id: $SLURM_JOB_ID
 echo output_directory: $OUTPUT_DIR
 echo output_file: test_${SLURM_JOB_ID}.out
-echo compilation_flags: $FLAGS
+echo compilation_flags: -DOPENACC,-DOPT,$FLAGS
 echo number_executions: $REPEAT
 echo server: Aolin
 echo partition_file: $SLURM_JOB_PARTITION

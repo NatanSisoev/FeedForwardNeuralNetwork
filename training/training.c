@@ -26,7 +26,12 @@
  **/
 void feed_input(int i) {
     #if defined(ALL) || defined(TRAINING) || defined(FEED_INPUT)
-    #pragma omp parallel for  // training.feed_input
+        // training.feed_input
+        #if defined(OPENMP)
+            #pragma omp parallel for
+        #elif defined(OPENACC)
+            #pragma acc parallel loop present(num_neurons[0], lay[:1], lay[0].actv[0:num_neurons[0]], input[i][0:num_neurons[0]])
+        #endif
     #endif
     for (int j = 0; j < num_neurons[0]; j++)
         lay[0].actv[j] = input[i][j];
@@ -52,26 +57,30 @@ void feed_input(int i) {
  *
  */
 void forward_prop() {
-    #if defined(OPENACC)
-    #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers])
-    {
-    #endif
     for (int i = 1; i < num_layers; i++) {
         #if defined(ALL) || defined(TRAINING) || defined(FORWARD_PROP) || defined(TRAINING_FORWARD_PROP_LAYERS) || defined(OPT)
-        #if defined(OPENMP)
-        #pragma omp parallel for  // training.forward_prop.layers
-        #elif defined(OPENACC)
-        #pragma acc parallel loop gang vector  // training.forward_prop.layers
-        #endif
+            // training.forward_prop.layers
+            #if defined(OPENMP)
+                #pragma omp parallel for
+            #elif defined(OPENACC)
+                #pragma acc parallel loop present(lay[0:num_layers], num_neurons[0:num_layers])
+            #endif
         #endif
         for (int j = 0; j < num_neurons[i]; j++) {
-            lay[i].z[j] = lay[i].bias[j];
+            float sum = lay[i].bias[j];
             
-            #if defined(OPENACC)
-            #pragma acc loop seq
+            #if defined(ALL) || defined(TRAINING) || defined(FORWARD_PROP) || defined(TRAINING_FORWARD_PROP_LAYERS) || defined(OPT)
+            // training.forward_prop.layers
+                #if defined(OPENMP)
+                    #pragma omp simd reduction(+:sum)
+                #elif defined(OPENACC)
+                    #pragma acc loop reduction(+:sum)
+                #endif
             #endif
             for (int k = 0; k < num_neurons[i - 1]; k++)
-                lay[i].z[j] += ((lay[i - 1].out_weights[j * num_neurons[i - 1] + k]) * (lay[i - 1].actv[k]));
+                sum += ((lay[i - 1].out_weights[j * num_neurons[i - 1] + k]) * (lay[i - 1].actv[k]));
+
+            lay[i].z[j] = sum;
 
             if (i < num_layers - 1)
                 lay[i].actv[j] = ((lay[i].z[j]) < 0) ? 0 : lay[i].z[j];
@@ -79,9 +88,6 @@ void forward_prop() {
                 lay[i].actv[j] = 1.0 / (1.0 + exp(-lay[i].z[j]));
         }
     }
-    #if defined(OPENACC)
-    }
-    #endif
 }
 
 /**
@@ -105,8 +111,8 @@ void forward_prop() {
  *
  */
 void back_prop(int p) {
-    #if defined(OPENACC)
-    #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers], desired_outputs[0:num_out_layer])
+    #if defined(OPENACC_UNREVISED)
+    #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers], desired_outputs[0:10])
     {
     #endif
     
@@ -129,7 +135,7 @@ void back_prop(int p) {
     #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_ERRORS)
     #if defined(OPENMP)
     #pragma omp parallel for  // training.back_prop.errors
-    #elif defined(OPENACC)
+    #elif defined(OPENACC_UNREVISED)
     #pragma acc parallel loop gang vector
     #endif
     #endif
@@ -141,7 +147,7 @@ void back_prop(int p) {
     }
 
     // Inicialitzar dactv de l'última capa oculta a zero
-    #if defined(OPENACC)
+    #if defined(OPENACC_UNREVISED)
     #pragma acc parallel loop gang vector
     #endif
     for (int k = 0; k < num_neurons[num_layers - 2]; k++) {
@@ -154,7 +160,7 @@ void back_prop(int p) {
     //   dactv[k] = w_kj[] * dz[j],
     // que després servirà per calcular dz de les neurones ocultes
     
-    #if defined(OPENACC)
+    #if defined(OPENACC_UNREVISED)
     #pragma acc parallel loop collapse(2) gang vector
     for (int j = 0; j < num_neurons[num_layers - 1]; j++) {
         for (int k = 0; k < num_neurons[num_layers - 2]; k++) {
@@ -184,7 +190,7 @@ void back_prop(int p) {
     // Hidden Layers
     for (int i = num_layers - 2; i > 0; i--) {
         // Inicialitzar dactv de la capa anterior si no és la capa d'entrada
-        #if defined(OPENACC)
+        #if defined(OPENACC_UNREVISED)
         if (i > 1) {
             #pragma acc parallel loop gang vector
             for (int k = 0; k < num_neurons[i - 1]; k++) {
@@ -196,14 +202,14 @@ void back_prop(int p) {
         #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_HIDDEN_LAYERS) || defined(OPT)
         #if defined(OPENMP)
         #pragma omp parallel for  // training.back_prop.hidden_layers
-        #elif defined(OPENACC)
+        #elif defined(OPENACC_UNREVISED)
         #pragma acc parallel loop gang vector  // training.back_prop.hidden_layers
         #endif
         #endif
         for (int j = 0; j < num_neurons[i]; j++) {
             lay[i].dz[j] = (lay[i].z[j] >= 0) ? lay[i].dactv[j] : 0.0;
 
-            #if defined(OPENACC)
+            #if defined(OPENACC_UNREVISED)
             #pragma acc loop seq
             #endif
             for (int k = 0; k < num_neurons[i - 1]; k++) {
@@ -212,7 +218,7 @@ void back_prop(int p) {
                     #if defined(ALL) || defined(TRAINING) || defined(BACK_PROP) || defined(TRAINING_BACK_PROP_HIDDEN_LAYERS) || defined(OPT)
                     #if defined(OPENMP)
                     #pragma omp critical
-                    #elif defined(OPENACC)
+                    #elif defined(OPENACC_UNREVISED)
                     #pragma acc atomic update
                     #endif
                     #endif
@@ -224,7 +230,7 @@ void back_prop(int p) {
         }
     }
     
-    #if defined(OPENACC)
+    #if defined(OPENACC_UNREVISED)
     }
     #endif
 }
@@ -237,7 +243,7 @@ void back_prop(int p) {
  * @see back_prop
  */
 void update_weights(void) {
-    #if defined(OPENACC)
+    #if defined(OPENACC_UNREVISED)
     #pragma acc data present(lay[0:num_layers], num_neurons[0:num_layers], alpha)
     {
     #endif
@@ -245,7 +251,7 @@ void update_weights(void) {
         #if defined(ALL) || defined(TRAINING) || defined(UPDATE_WEIGHTS) || defined(TRAINING_UPDATE_WEIGHTS_WEIGHTS) || defined(OPT)
         #if defined(OPENMP)
         #pragma omp parallel for  // training.update_weights.weights
-        #elif defined(OPENACC)
+        #elif defined(OPENACC_UNREVISED)
         #pragma acc parallel loop collapse(2) gang vector  // training.update_weights.weights
         #endif
         #endif
@@ -256,14 +262,14 @@ void update_weights(void) {
         #if defined(ALL) || defined(TRAINING) || defined(UPDATE_WEIGHTS) || defined(TRAINING_UPDATE_WEIGHTS_BIASES)
         #if defined(OPENMP)
         #pragma omp parallel for  // training.update_weights.biases
-        #elif defined(OPENACC)
+        #elif defined(OPENACC_UNREVISED)
         #pragma acc parallel loop gang vector  // training.update_weights.biases
         #endif
         #endif
         for (int j = 0; j < num_neurons[i + 1]; j++)  // Update Bias
             lay[i + 1].bias[j] = lay[i + 1].bias[j] - (alpha * lay[i + 1].dbias[j]);
     }
-    #if defined(OPENACC)
+    #if defined(OPENACC_UNREVISED)
     }
     #endif
 }
