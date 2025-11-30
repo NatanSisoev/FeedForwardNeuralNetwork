@@ -1,0 +1,122 @@
+main.c:
+freeInput:
+     26, Loop not vectorized/parallelized: contains call
+printRecognized:
+     45, Loop not vectorized/parallelized: contains call
+train_neural_net:
+     76, Generating enter data copyin(num_out_layer,num_neurons[:num_layers],input[:num_training_patterns],num_layers,alpha,desired_outputs[:num_training_patterns])
+     88, Loop not vectorized/parallelized: contains call
+     91, Generating enter data copyin(desired_outputs[i][:num_out_layer],lay[:num_layers],input[i][:num_neurons->])
+     94, Loop not vectorized/parallelized: contains call
+    101, Generating enter data copyin(lay->dbias[:num_neurons->],lay->dactv[:num_neurons->],lay->bias[:num_neurons->],lay->z[:num_neurons->],lay->dz[:num_neurons->],lay->actv[:num_neurons->])
+    103, Loop not vectorized/parallelized: contains call
+    106, Generating enter data copyin(lay->out_weights[:num_neurons->*num_neurons->],lay->dw[:num_neurons->*num_neurons->])
+    113, Generated vector simd code for the loop
+    116, Loop not vectorized/parallelized: contains call
+    124, Loop not vectorized/parallelized: contains call
+    139, freeInput inlined, size=5 (inline) file main.c (25)
+          26, Loop not vectorized/parallelized: contains call
+test_nn:
+    155, Loop not vectorized: data dependency
+         Loop unrolled 4 times
+    161, Generating update device(lay->actv[:num_neurons->])
+    165, printRecognized inlined, size=17 (inline) file main.c (32)
+          45, Loop not vectorized/parallelized: contains call
+    165, Generating update self(lay->actv[:num_neurons->])
+    171, freeInput inlined, size=5 (inline) file main.c (25)
+          26, Loop not vectorized/parallelized: contains call
+main:
+    214, Loop not vectorized/parallelized: contains call
+    222, Generating exit data delete(lay->actv[:num_neurons->],lay->dz[:num_neurons->],lay->bias[:num_neurons->],lay->dactv[:num_neurons->],lay->dbias[:num_neurons->],lay->z[:num_neurons->])
+    226, Generating exit data delete(lay->dw[:ow],lay->out_weights[:ow])
+    227, Generating exit data delete(lay[:num_layers])
+    229, Loop not vectorized/parallelized: contains call
+    231, Generating exit data delete(desired_outputs[i][:num_out_layer])
+    237, Generating exit data delete(alpha,num_layers,desired_outputs[:num_out_layer],num_out_layer,num_neurons[:num_layers])
+common/common.c:
+readImg:
+     37, Loop not vectorized/parallelized: not countable
+loadPatternSet:
+     55, readImg inlined, size=14 (inline) file common/common.c (27)
+          37, Loop not vectorized/parallelized: not countable
+printImg:
+     77, Loop not vectorized/parallelized: contains call
+     83, Loop not vectorized/parallelized: contains call
+configuration/config.c:
+printConfiguration:
+     48, Loop not vectorized/parallelized: contains call
+     57, Loop not vectorized/parallelized: contains call
+readConfiguration:
+     70, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     73, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     76, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     78, Loop not vectorized/parallelized: contains call
+     80, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     86, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     89, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     92, Loop not vectorized/parallelized: contains call
+     98, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    101, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    104, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    107, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    110, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    113, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    116, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    119, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    122, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    125, printConfiguration inlined, size=22 (inline) file configuration/config.c (46)
+          48, Loop not vectorized/parallelized: contains call
+          57, Loop not vectorized/parallelized: contains call
+layer/layer.c:
+randomizer/randomizer.c:
+initialize/initialize.c:
+init:
+     26, create_architecture inlined, size=58 (inline) file initialize/initialize.c (48)
+          51, Loop not vectorized/parallelized: contains structure move
+          56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          56, Loop not vectorized/parallelized: contains call
+dinit:
+     36, Loop not vectorized/parallelized: contains call
+     39, Loop not vectorized/parallelized: contains call
+create_architecture:
+     51, Loop not vectorized/parallelized: contains structure move
+     56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          73, Loop not vectorized/parallelized: contains call
+          88, Loop not vectorized/parallelized: contains call
+initialize_weights:
+     73, Loop not vectorized/parallelized: contains call
+     88, Loop not vectorized/parallelized: contains call
+/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c:
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 23: warning: this declaration has no storage class or type specifier
+  elapsed_feed_input = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 23: error: declaration is incompatible with "double elapsed_feed_input" (declared at line 30 of "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.h")
+  elapsed_feed_input = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 24: warning: this declaration has no storage class or type specifier
+  elapsed_forward_prop = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 24: error: declaration is incompatible with "double elapsed_forward_prop" (declared at line 31 of "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.h")
+  elapsed_forward_prop = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 25: warning: this declaration has no storage class or type specifier
+  elapsed_back_prop = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 25: error: declaration is incompatible with "double elapsed_back_prop" (declared at line 32 of "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.h")
+  elapsed_back_prop = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 26: warning: this declaration has no storage class or type specifier
+  elapsed_update_weights = 0;
+  ^
+
+"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c", line 26: error: declaration is incompatible with "double elapsed_update_weights" (declared at line 33 of "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.h")
+  elapsed_update_weights = 0;
+  ^
+
+4 errors detected in the compilation of "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/training/training.c".
