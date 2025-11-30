@@ -14,16 +14,27 @@
 module load nvhpc/21.2
 nvidia-smi
 
-#gcc -Ofast main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec -lm 
-nvc -O3 -acc=gpu -Minfo=all \
-    -DOPENACC -DOPT \
-    main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c \
-    -o exec
+#gcc -Ofast main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec_gcc -lm 
 
-#./exec
+#echo "================"
+#echo "================ ACC serial"
+
+#./exec_gcc
+
+nvc -DOPENACC -O3 -acc=gpu -Minfo=all main.c common/common.c configuration/config.c layer/layer.c randomizer/randomizer.c initialize/initialize.c training/training.c -o exec
+
+#echo "================"
+#echo "================ Without Profiling"
+
+./exec
+
+echo "================"
+echo "================ PROFILING"
 
 # Profiling:
-nsys nvprof --print-gpu-trace ./exec #summary 
+
+nsys nvprof --print-gpu-trace ./exec  #summary 
+
 #ncu --target-processes application-only --set full -f -o profile.ncu-rep ./exec
 
 #Visualize profiling:
@@ -33,3 +44,5 @@ nsys nvprof --print-gpu-trace ./exec #summary
 # Profile traces with nsys 
 #nsys profile -f true -t nvtx,cuda -o profile.nsys-rep ./exec
 # Download "profile.nsys-rep.qdrep" on your computer and use nsys to open the file.
+
+rm exec

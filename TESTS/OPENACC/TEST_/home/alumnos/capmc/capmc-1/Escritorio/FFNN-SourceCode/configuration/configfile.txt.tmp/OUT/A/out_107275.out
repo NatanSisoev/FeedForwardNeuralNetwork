@@ -1,0 +1,19 @@
+---
+test_number: /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/configuration/configfile.txt.tmp
+date: 2025-11-30 23:26:15
+job_id: 107275
+output_directory: /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/OPENACC/TEST_/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/configuration/configfile.txt.tmp/OUT/A
+output_file: out_107275.out
+errors_file: err_107275.out
+compilation_flags: -DOPENACC,
+number_executions: 1
+server: Aolin
+partition_file: cuda-ext.q
+num_threads: 12
+num_epochs: 10
+gpu_name: NVIDIA GeForce RTX 3080
+num_neurons: 135
+---
+#START:1
+924	 2.193863 sec 
+#END:1

@@ -1,0 +1,130 @@
+main.c:
+freeInput:
+     26, Loop not vectorized/parallelized: contains call
+printRecognized:
+     45, Loop not vectorized/parallelized: contains call
+train_neural_net:
+     76, Generating enter data copyin(num_out_layer,num_neurons[:num_layers],input[:num_training_patterns],num_layers,alpha,desired_outputs[:num_training_patterns])
+     88, Loop not vectorized/parallelized: contains call
+     91, Generating enter data copyin(desired_outputs[i][:num_out_layer],lay[:num_layers],input[i][:num_neurons->])
+     94, Loop not vectorized/parallelized: contains call
+    101, Generating enter data copyin(lay->dbias[:num_neurons->],lay->dactv[:num_neurons->],lay->bias[:num_neurons->],lay->z[:num_neurons->],lay->dz[:num_neurons->],lay->actv[:num_neurons->])
+    103, Loop not vectorized/parallelized: contains call
+    106, Generating enter data copyin(lay->out_weights[:num_neurons->*num_neurons->],lay->dw[:num_neurons->*num_neurons->])
+    113, Generated vector simd code for the loop
+    116, Loop not vectorized/parallelized: contains call
+    124, Loop not vectorized/parallelized: contains call
+    139, freeInput inlined, size=5 (inline) file main.c (25)
+          26, Loop not vectorized/parallelized: contains call
+test_nn:
+    155, Loop not vectorized: data dependency
+         Loop unrolled 4 times
+    161, Generating update device(lay->actv[:num_neurons->])
+    165, printRecognized inlined, size=17 (inline) file main.c (32)
+          45, Loop not vectorized/parallelized: contains call
+    165, Generating update self(lay->actv[:num_neurons->])
+    171, freeInput inlined, size=5 (inline) file main.c (25)
+          26, Loop not vectorized/parallelized: contains call
+main:
+    214, Loop not vectorized/parallelized: contains call
+    222, Generating exit data delete(lay->actv[:num_neurons->],lay->dz[:num_neurons->],lay->bias[:num_neurons->],lay->dactv[:num_neurons->],lay->dbias[:num_neurons->],lay->z[:num_neurons->])
+    226, Generating exit data delete(lay->dw[:ow],lay->out_weights[:ow])
+    227, Generating exit data delete(lay[:num_layers])
+    229, Loop not vectorized/parallelized: contains call
+    231, Generating exit data delete(desired_outputs[i][:num_out_layer])
+    237, Generating exit data delete(alpha,num_layers,desired_outputs[:num_out_layer],num_out_layer,num_neurons[:num_layers])
+common/common.c:
+readImg:
+     37, Loop not vectorized/parallelized: not countable
+loadPatternSet:
+     55, readImg inlined, size=14 (inline) file common/common.c (27)
+          37, Loop not vectorized/parallelized: not countable
+printImg:
+     77, Loop not vectorized/parallelized: contains call
+     83, Loop not vectorized/parallelized: contains call
+configuration/config.c:
+printConfiguration:
+     48, Loop not vectorized/parallelized: contains call
+     57, Loop not vectorized/parallelized: contains call
+readConfiguration:
+     70, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     73, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     76, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     78, Loop not vectorized/parallelized: contains call
+     80, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     86, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     89, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     92, Loop not vectorized/parallelized: contains call
+     98, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    101, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    104, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    107, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    110, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    113, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    116, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    119, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    122, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    125, printConfiguration inlined, size=22 (inline) file configuration/config.c (46)
+          48, Loop not vectorized/parallelized: contains call
+          57, Loop not vectorized/parallelized: contains call
+layer/layer.c:
+randomizer/randomizer.c:
+initialize/initialize.c:
+init:
+     26, create_architecture inlined, size=58 (inline) file initialize/initialize.c (48)
+          51, Loop not vectorized/parallelized: contains structure move
+          56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          56, Loop not vectorized/parallelized: contains call
+dinit:
+     36, Loop not vectorized/parallelized: contains call
+     39, Loop not vectorized/parallelized: contains call
+create_architecture:
+     51, Loop not vectorized/parallelized: contains structure move
+     56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          73, Loop not vectorized/parallelized: contains call
+          88, Loop not vectorized/parallelized: contains call
+initialize_weights:
+     73, Loop not vectorized/parallelized: contains call
+     88, Loop not vectorized/parallelized: contains call
+training/training.c:
+feed_input:
+     34, Generating present(input[:1],num_neurons[:1],lay[:1])
+         Generating Tesla code
+         50, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+forward_prop:
+     82, Generating present(num_neurons[:num_layers],lay[:num_layers])
+     84, Generating Tesla code
+         97, #pragma acc loop gang /* blockIdx.x */
+        112, #pragma acc loop vector(128) /* threadIdx.x */
+             Generating reduction(+:temp)
+     84, Loop not vectorized/parallelized: contains call
+    112, Loop is parallelizable
+back_prop:
+    173, Generating present(desired_outputs[:10],num_neurons[:num_layers],lay[:num_layers])
+         Generating Tesla code
+        186, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+    191, Generating Tesla code
+        201, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+    203, Generating Tesla code
+        235, #pragma acc loop gang /* blockIdx.x */
+        244, #pragma acc loop vector(128) /* threadIdx.x */
+             Generating reduction(+:sum)
+    244, Loop is parallelizable
+    256, Loop not vectorized/parallelized: contains call
+    259, Generating Tesla code
+        267, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */
+    270, Generating Tesla code
+        279, #pragma acc loop gang /* blockIdx.x */
+        289, #pragma acc loop vector(128) /* threadIdx.x */
+    289, Loop is parallelizable
+update_weights:
+    324, Generating present(alpha,num_neurons[:num_layers],lay[:num_layers])
+    326, Generating Tesla code
+        334, #pragma acc loop seq collapse(2)
+        335,   collapsed */
+    326, Loop not vectorized/parallelized: contains call
+    336, Generating Tesla code
+        345, #pragma acc loop seq
+/opt/rh/gcc-toolset-13/root/usr/bin/ld: aviso: /opt/nvidia/hpc_sdk/Linux_x86_64/21.2/compilers/lib/nvhpc.ld contiene secciones de salida. ¿Olvidó -T?
+/opt/rh/gcc-toolset-13/root/usr/bin/ld: warning: /tmp/pgcudafatSgTohernucZNn.o: missing .note.GNU-stack section implies executable stack
+/opt/rh/gcc-toolset-13/root/usr/bin/ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker

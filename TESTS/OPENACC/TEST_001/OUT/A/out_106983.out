@@ -1,0 +1,19 @@
+---
+test_number: 001
+date: 2025-11-30 19:22:11
+job_id: 106983
+output_directory: /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/OPENACC/TEST_001/OUT/A
+output_file: out_106983.out
+errors_file: err_106983.out
+compilation_flags: -DOPENACC,-DFORWARD_PROP -DUPDATE_WEIGHTS
+number_executions: 1
+server: Aolin
+partition_file: cuda-ext.q
+num_threads: 12
+num_epochs: 10
+gpu_name: NVIDIA GeForce RTX 2070
+num_neurons: 135
+---
+#START:1
+926	 113.402419 sec 
+#END:1

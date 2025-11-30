@@ -1,0 +1,18 @@
+---
+test_number: 001
+date: 2025-11-30 21:09:33
+job_id: 107134
+output_directory: /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/OPENACC/TEST_001/OUT/A
+output_file: out_107134.out
+errors_file: err_107134.out
+compilation_flags: -DOPENACC,-DALL
+number_executions: 1
+server: Aolin
+partition_file: cuda-ext.q
+num_threads: 12
+num_epochs: 10
+gpu_name: NVIDIA GeForce RTX 2070
+num_neurons: 135
+---
+#START:1
+#END:1

@@ -1,0 +1,107 @@
+main.c:
+"main.c", line 134: error: identifier "elapsed_feed_input" is undefined
+      printf("FEED_INPUT\t%f\n", elapsed_feed_input);
+                                 ^
+
+"main.c", line 135: error: identifier "elapsed_forward_prop" is undefined
+      printf("FORWARD_PROP\t%f\n", elapsed_forward_prop);
+                                   ^
+
+"main.c", line 136: error: identifier "elapsed_back_prop" is undefined
+      printf("BACK_PROP\t%f\n", elapsed_back_prop);
+                                ^
+
+"main.c", line 137: error: identifier "elapsed_update_weights" is undefined
+      printf("UPDATE_WEIGHTS\t%f\n", elapsed_update_weights);
+                                     ^
+
+4 errors detected in the compilation of "main.c".
+common/common.c:
+readImg:
+     37, Loop not vectorized/parallelized: not countable
+loadPatternSet:
+     55, readImg inlined, size=14 (inline) file common/common.c (27)
+          37, Loop not vectorized/parallelized: not countable
+printImg:
+     77, Loop not vectorized/parallelized: contains call
+     83, Loop not vectorized/parallelized: contains call
+configuration/config.c:
+printConfiguration:
+     48, Loop not vectorized/parallelized: contains call
+     57, Loop not vectorized/parallelized: contains call
+readConfiguration:
+     70, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     73, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     76, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     78, Loop not vectorized/parallelized: contains call
+     80, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     86, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     89, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     92, Loop not vectorized/parallelized: contains call
+     98, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    101, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    104, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    107, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    110, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    113, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    116, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    119, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    122, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    125, printConfiguration inlined, size=22 (inline) file configuration/config.c (46)
+          48, Loop not vectorized/parallelized: contains call
+          57, Loop not vectorized/parallelized: contains call
+layer/layer.c:
+randomizer/randomizer.c:
+initialize/initialize.c:
+init:
+     26, create_architecture inlined, size=58 (inline) file initialize/initialize.c (48)
+          51, Loop not vectorized/parallelized: contains structure move
+          56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          56, Loop not vectorized/parallelized: contains call
+dinit:
+     36, Loop not vectorized/parallelized: contains call
+     39, Loop not vectorized/parallelized: contains call
+create_architecture:
+     51, Loop not vectorized/parallelized: contains structure move
+     56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          73, Loop not vectorized/parallelized: contains call
+          88, Loop not vectorized/parallelized: contains call
+initialize_weights:
+     73, Loop not vectorized/parallelized: contains call
+     88, Loop not vectorized/parallelized: contains call
+training/training.c:
+feed_input:
+     36, Generating present(input[:1],num_neurons[:1],lay[:1])
+         Generating Tesla code
+         50, #pragma acc loop seq
+forward_prop:
+     85, Generating present(num_neurons[:num_layers],lay[:num_layers])
+     87, Generating Tesla code
+        100, #pragma acc loop gang /* blockIdx.x */
+        115, #pragma acc loop vector(128) /* threadIdx.x */
+             Generating reduction(+:temp)
+     87, Loop not vectorized/parallelized: contains call
+    115, Loop is parallelizable
+back_prop:
+    176, Generating present(desired_outputs[:10],num_neurons[:num_layers],lay[:num_layers])
+         Generating Tesla code
+        189, #pragma acc loop seq
+    194, Generating Tesla code
+        204, #pragma acc loop seq
+    206, Generating Tesla code
+        238, #pragma acc loop seq
+        247, #pragma acc loop seq
+    259, Loop not vectorized/parallelized: contains call
+    262, Generating Tesla code
+        270, #pragma acc loop seq
+    273, Generating Tesla code
+        282, #pragma acc loop seq
+        292, #pragma acc loop seq
+update_weights:
+    328, Generating present(alpha,num_neurons[:num_layers],lay[:num_layers])
+    330, Generating Tesla code
+        338, #pragma acc loop gang, vector(128) collapse(2) /* blockIdx.x threadIdx.x */
+        339,   /* blockIdx.x threadIdx.x collapsed */
+    330, Loop not vectorized/parallelized: contains call
+    340, Generating Tesla code
+        349, #pragma acc loop gang, vector(128) /* blockIdx.x threadIdx.x */

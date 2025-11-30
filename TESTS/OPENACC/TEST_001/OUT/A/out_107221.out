@@ -1,0 +1,19 @@
+---
+test_number: 001
+date: 2025-11-30 22:03:14
+job_id: 107221
+output_directory: /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/OPENACC/TEST_001/OUT/A
+output_file: out_107221.out
+errors_file: err_107221.out
+compilation_flags: -DOPENACC,-DFEED_INPUT
+number_executions: 1
+server: Aolin
+partition_file: cuda-ext.q
+num_threads: 12
+num_epochs: 10
+gpu_name: NVIDIA GeForce RTX 3080
+num_neurons: 135
+---
+#START:1
+928	 208.398257 sec 
+#END:1

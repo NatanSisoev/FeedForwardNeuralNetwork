@@ -1,0 +1,138 @@
+main.c:
+freeInput:
+     26, Loop not vectorized/parallelized: contains call
+printRecognized:
+     45, Loop not vectorized/parallelized: contains call
+train_neural_net:
+     76, Generating enter data copyin(num_out_layer,num_neurons[:num_layers],input[:num_training_patterns],num_layers,alpha,desired_outputs[:num_training_patterns])
+     88, Loop not vectorized/parallelized: contains call
+     91, Generating enter data copyin(desired_outputs[i][:num_out_layer],lay[:num_layers],input[i][:num_neurons->])
+     94, Loop not vectorized/parallelized: contains call
+    101, Generating enter data copyin(lay->dbias[:num_neurons->],lay->dactv[:num_neurons->],lay->bias[:num_neurons->],lay->z[:num_neurons->],lay->dz[:num_neurons->],lay->actv[:num_neurons->])
+    103, Loop not vectorized/parallelized: contains call
+    106, Generating enter data copyin(lay->out_weights[:num_neurons->*num_neurons->],lay->dw[:num_neurons->*num_neurons->])
+    113, Generated vector simd code for the loop
+    116, Loop not vectorized/parallelized: contains call
+    124, Loop not vectorized/parallelized: contains call
+    139, freeInput inlined, size=5 (inline) file main.c (25)
+          26, Loop not vectorized/parallelized: contains call
+test_nn:
+    155, Loop not vectorized: data dependency
+         Loop unrolled 4 times
+    161, Generating update device(lay->actv[:num_neurons->])
+    165, printRecognized inlined, size=17 (inline) file main.c (32)
+          45, Loop not vectorized/parallelized: contains call
+    165, Generating update self(lay->actv[:num_neurons->])
+    171, freeInput inlined, size=5 (inline) file main.c (25)
+          26, Loop not vectorized/parallelized: contains call
+main:
+    214, Loop not vectorized/parallelized: contains call
+    222, Generating exit data delete(lay->actv[:num_neurons->],lay->dz[:num_neurons->],lay->bias[:num_neurons->],lay->dactv[:num_neurons->],lay->dbias[:num_neurons->],lay->z[:num_neurons->])
+    226, Generating exit data delete(lay->dw[:ow],lay->out_weights[:ow])
+    227, Generating exit data delete(lay[:num_layers])
+    229, Loop not vectorized/parallelized: contains call
+    231, Generating exit data delete(desired_outputs[i][:num_out_layer])
+    237, Generating exit data delete(alpha,num_layers,desired_outputs[:num_out_layer],num_out_layer,num_neurons[:num_layers])
+common/common.c:
+readImg:
+     37, Loop not vectorized/parallelized: not countable
+loadPatternSet:
+     55, readImg inlined, size=14 (inline) file common/common.c (27)
+          37, Loop not vectorized/parallelized: not countable
+printImg:
+     77, Loop not vectorized/parallelized: contains call
+     83, Loop not vectorized/parallelized: contains call
+configuration/config.c:
+printConfiguration:
+     48, Loop not vectorized/parallelized: contains call
+     57, Loop not vectorized/parallelized: contains call
+readConfiguration:
+     70, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     73, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     76, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     78, Loop not vectorized/parallelized: contains call
+     80, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     86, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     89, checkError inlined, size=6 (inline) file configuration/config.c (36)
+     92, Loop not vectorized/parallelized: contains call
+     98, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    101, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    104, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    107, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    110, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    113, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    116, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    119, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    122, checkError inlined, size=6 (inline) file configuration/config.c (36)
+    125, printConfiguration inlined, size=22 (inline) file configuration/config.c (46)
+          48, Loop not vectorized/parallelized: contains call
+          57, Loop not vectorized/parallelized: contains call
+layer/layer.c:
+randomizer/randomizer.c:
+initialize/initialize.c:
+init:
+     26, create_architecture inlined, size=58 (inline) file initialize/initialize.c (48)
+          51, Loop not vectorized/parallelized: contains structure move
+          56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          56, Loop not vectorized/parallelized: contains call
+dinit:
+     36, Loop not vectorized/parallelized: contains call
+     39, Loop not vectorized/parallelized: contains call
+create_architecture:
+     51, Loop not vectorized/parallelized: contains structure move
+     56, initialize_weights inlined, size=38 (inline) file initialize/initialize.c (65)
+          73, Loop not vectorized/parallelized: contains call
+          88, Loop not vectorized/parallelized: contains call
+initialize_weights:
+     73, Loop not vectorized/parallelized: contains call
+     88, Loop not vectorized/parallelized: contains call
+training/training.c:
+"training/training.c", line 23: warning: this declaration has no storage class or type specifier
+  elapsed_feed_input = 0;
+  ^
+
+"training/training.c", line 23: error: declaration is incompatible with "double elapsed_feed_input" (declared at line 30 of "training/training.h")
+  elapsed_feed_input = 0;
+  ^
+
+"training/training.c", line 24: warning: this declaration has no storage class or type specifier
+  elapsed_forward_prop = 0;
+  ^
+
+"training/training.c", line 24: error: declaration is incompatible with "double elapsed_forward_prop" (declared at line 31 of "training/training.h")
+  elapsed_forward_prop = 0;
+  ^
+
+"training/training.c", line 25: warning: this declaration has no storage class or type specifier
+  elapsed_back_prop = 0;
+  ^
+
+"training/training.c", line 25: error: declaration is incompatible with "double elapsed_back_prop" (declared at line 32 of "training/training.h")
+  elapsed_back_prop = 0;
+  ^
+
+"training/training.c", line 26: warning: this declaration has no storage class or type specifier
+  elapsed_update_weights = 0;
+  ^
+
+"training/training.c", line 26: error: declaration is incompatible with "double elapsed_update_weights" (declared at line 33 of "training/training.h")
+  elapsed_update_weights = 0;
+  ^
+
+4 errors detected in the compilation of "training/training.c".
+WARNING: exec and any of its children processes will be profiled.
+
+Collecting data...
+Processing events...
+Saving temporary "/tmp/nsys-report-70ba-dd7f-a50a-62b9.qdstrm" file to disk...
+
+Creating final output files...
+Processing [0%                                                                ]Processing [1%                                                                ]Processing [2%                                                                ]Processing [1%                                                                ]Processing [=5%                                                               ]Processing [4%                                                                ]Processing [3%                                                                ]Processing [2%                                                                ]Processing [==7%                                                              ]Processing [2%                                                                ]Processing [1%                                                                ]Processing [2%                                                                ]Processing [1%                                                                ]Processing [0%                                                                ]Processing [1%                                                                ]Processing [2%                                                                ]Processing [3%                                                                ]Processing [4%                                                                ]Processing [=5%                                                               ]Processing [=6%                                                               ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [==7%                                                              ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===8%                                                             ]Processing [===9%                                                             ]Processing [===10%                                                            ]Processing [====11%                                                           ]Processing [====12%                                                           ]Processing [=====13%                                                          ]Processing [======14%                                                         ]Processing [======15%                                                         ]Processing [=======16%                                                        ]Processing [========17%                                                       ]Processing [========18%                                                       ]Processing [=========19%                                                      ]Processing [==========20%                                                     ]Processing [==========21%                                                     ]Processing [===========22%                                                    ]Processing [============23%                                                   ]Processing [============24%                                                   ]Processing [=============25%                                                  ]Processing [==============26%                                                 ]Processing [==============27%                                                 ]Processing [===============28%                                                ]Processing [================29%                                               ]Processing [================30%                                               ]Processing [=================31%                                              ]Processing [==================32%                                             ]Processing [==================33%                                             ]Processing [===================34%                                            ]Processing [====================35%                                           ]Processing [====================36%                                           ]Processing [=====================37%                                          ]Processing [======================38%                                         ]Processing [======================39%                                         ]Processing [=======================40%                                        ]Processing [========================41%                                       ]Processing [========================42%                                       ]Processing [=========================43%                                      ]Processing [==========================44%                                     ]Processing [==========================45%                                     ]Processing [===========================46%                                    ]Processing [============================47%                                   ]Processing [============================48%                                   ]Processing [=============================49%                                  ]Processing [==============================50%                                 ]Processing [==============================51%                                 ]Processing [===============================52%                                ]Processing [===============================53%                                ]Processing [================================54%                               ]Processing [=================================55%                              ]Processing [=================================56%                              ]Processing [==================================57%                             ]Processing [===================================58%                            ]Processing [===================================59%                            ]Processing [====================================60%                           ]Processing [=====================================61%                          ]Processing [=====================================62%                          ]Processing [======================================63%                         ]Processing [=======================================64%                        ]Processing [=======================================65%                        ]Processing [========================================66%                       ]Processing [=========================================67%                      ]Processing [=========================================68%                      ]Processing [==========================================69%                     ]Processing [===========================================70%                    ]Processing [===========================================71%                    ]Processing [============================================72%                   ]Processing [=============================================73%                  ]Processing [=============================================74%                  ]Processing [==============================================75%                 ]Processing [==============================================================100%]
+Saved report file to "/tmp/nsys-report-70ba-dd7f-a50a-62b9.qdrep"
+Exporting 699378 events: [1%                                                  ]Exporting 699378 events: [2%                                                  ]Exporting 699378 events: [3%                                                  ]Exporting 699378 events: [4%                                                  ]Exporting 699378 events: [5%                                                  ]Exporting 699378 events: [=6%                                                 ]Exporting 699378 events: [=7%                                                 ]Exporting 699378 events: [==8%                                                ]Exporting 699378 events: [==9%                                                ]Exporting 699378 events: [==10%                                               ]Exporting 699378 events: [==11%                                               ]Exporting 699378 events: [===12%                                              ]Exporting 699378 events: [===13%                                              ]Exporting 699378 events: [====14%                                             ]Exporting 699378 events: [====15%                                             ]Exporting 699378 events: [=====16%                                            ]Exporting 699378 events: [=====17%                                            ]Exporting 699378 events: [======18%                                           ]Exporting 699378 events: [======19%                                           ]Exporting 699378 events: [=======20%                                          ]Exporting 699378 events: [=======21%                                          ]Exporting 699378 events: [========22%                                         ]Exporting 699378 events: [========23%                                         ]Exporting 699378 events: [=========24%                                        ]Exporting 699378 events: [==========25%                                       ]Exporting 699378 events: [==========26%                                       ]Exporting 699378 events: [===========27%                                      ]Exporting 699378 events: [===========28%                                      ]Exporting 699378 events: [============29%                                     ]Exporting 699378 events: [============30%                                     ]Exporting 699378 events: [=============31%                                    ]Exporting 699378 events: [=============32%                                    ]Exporting 699378 events: [==============33%                                   ]Exporting 699378 events: [==============34%                                   ]Exporting 699378 events: [===============35%                                  ]Exporting 699378 events: [===============36%                                  ]Exporting 699378 events: [================37%                                 ]Exporting 699378 events: [================38%                                 ]Exporting 699378 events: [=================39%                                ]Exporting 699378 events: [=================40%                                ]Exporting 699378 events: [==================41%                               ]Exporting 699378 events: [==================42%                               ]Exporting 699378 events: [===================43%                              ]Exporting 699378 events: [===================44%                              ]Exporting 699378 events: [====================45%                             ]Exporting 699378 events: [====================46%                             ]Exporting 699378 events: [=====================47%                            ]Exporting 699378 events: [=====================48%                            ]Exporting 699378 events: [======================49%                           ]Exporting 699378 events: [=======================50%                          ]Exporting 699378 events: [=======================51%                          ]Exporting 699378 events: [========================52%                         ]Exporting 699378 events: [========================53%                         ]Exporting 699378 events: [=========================54%                        ]Exporting 699378 events: [=========================55%                        ]Exporting 699378 events: [==========================56%                       ]Exporting 699378 events: [==========================57%                       ]Exporting 699378 events: [===========================58%                      ]Exporting 699378 events: [===========================59%                      ]Exporting 699378 events: [============================60%                     ]Exporting 699378 events: [============================61%                     ]Exporting 699378 events: [=============================62%                    ]Exporting 699378 events: [=============================63%                    ]Exporting 699378 events: [==============================64%                   ]Exporting 699378 events: [==============================65%                   ]Exporting 699378 events: [===============================66%                  ]Exporting 699378 events: [===============================67%                  ]Exporting 699378 events: [================================68%                 ]Exporting 699378 events: [================================69%                 ]Exporting 699378 events: [=================================70%                ]Exporting 699378 events: [=================================71%                ]Exporting 699378 events: [==================================72%               ]Exporting 699378 events: [==================================73%               ]Exporting 699378 events: [===================================74%              ]Exporting 699378 events: [====================================75%             ]Exporting 699378 events: [====================================76%             ]Exporting 699378 events: [=====================================77%            ]Exporting 699378 events: [=====================================78%            ]Exporting 699378 events: [======================================79%           ]Exporting 699378 events: [======================================80%           ]Exporting 699378 events: [=======================================81%          ]Exporting 699378 events: [=======================================82%          ]Exporting 699378 events: [========================================83%         ]Exporting 699378 events: [========================================84%         ]Exporting 699378 events: [=========================================85%        ]Exporting 699378 events: [=========================================86%        ]Exporting 699378 events: [==========================================87%       ]Exporting 699378 events: [==========================================88%       ]Exporting 699378 events: [===========================================89%      ]Exporting 699378 events: [===========================================90%      ]Exporting 699378 events: [============================================91%     ]Exporting 699378 events: [============================================92%     ]Exporting 699378 events: [=============================================93%    ]Exporting 699378 events: [=============================================94%    ]Exporting 699378 events: [==============================================95%   ]Exporting 699378 events: [==============================================96%   ]Exporting 699378 events: [===============================================97%  ]Exporting 699378 events: [===============================================98%  ]Exporting 699378 events: [================================================99% ]Exporting 699378 events: [================================================100%]
+
+Exported successfully to
+/tmp/nsys-report-70ba-dd7f-a50a-62b9.sqlite
+Report file moved to "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/report3.qdrep"
+Report file moved to "/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/report3.sqlite"
+

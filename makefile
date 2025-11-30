@@ -1,9 +1,9 @@
 EXEC=exec
 PROFILE=profile.nsys-rep.qdrep
 
-OUTPUT_DIR=/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT
-OUTFILE_PREFIX=out-
-ERRFILE_PREFIX=err-
+OUTPUT_DIR=/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/TEST_X/OUT
+OUTFILE_PREFIX=out_
+ERRFILE_PREFIX=err_
 
 all:
 	@jid=$$(sbatch scheduler.sub X | awk '{print $$4}'); \
@@ -13,6 +13,7 @@ all:
 	e="$(OUTPUT_DIR)/$(ERRFILE_PREFIX)$$jid.out"; \
 	echo "Output file path: $$f"; \
 	echo "Errors file path: $$e"; \
+	$(MAKE) clean
 
 clean:
 	rm -f $(EXEC) *.o *.out *.qdrep *.sqlite out
