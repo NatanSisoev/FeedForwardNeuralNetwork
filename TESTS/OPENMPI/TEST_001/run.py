@@ -113,9 +113,12 @@ if "a" in parts:
             continue
         metadata = yaml.safe_load(meta_match.group(1))
 
-        flags = metadata.get("compilation_flags", "")
-        if flags:
-            flags = flags.replace("-D", "")
+        if metadata is None:
+            flags = ""
+        else:
+            flags = metadata.get("compilation_flags", "")
+            if flags:
+                flags = flags.replace("-D", "")
 
         # EXTRACT (accuracy, time)
         entries = re.findall(r"#START:\d+\s*(\d+)\s+(\d+\.\d+)", content)
