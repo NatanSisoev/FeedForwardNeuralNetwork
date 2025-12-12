@@ -9,7 +9,7 @@
 #SBATCH -e /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.err
 
 # MÒDULS
-module add gcc/13.2.1
+#module add gcc/13.2.1
 module load openmpi/4.1.1
 mpirun --version
 
@@ -41,8 +41,11 @@ cd "$BASE_DIR" || { echo "ERROR: Cannot enter $BASE_DIR"; exit 1; }
 # FLAGS PARSING
 if [ -n "$FLAGS_RAW" ]; then
     FLAGS="-D${FLAGS_RAW//,/ -D}"   # reemplaça comes amb " -D"
+    NP=$SLURM_NTASKS                # paral·lel amb tots els processos
+
 else
     FLAGS=""
+    NP=1                            # execució seqüencial
 fi
 
 # METADATA
@@ -57,14 +60,14 @@ echo compilation_flags: $FLAGS
 echo number_executions: $REPEAT
 echo server: Wilma
 echo partition_file: $SLURM_JOB_PARTITION
-echo num_processes: $SLURM_NTASKS
+echo num_processes: $NP
 echo num_epochs: $(grep -m1 'num_epochs=' $CONFIG_FILE | cut -d'=' -f2)
 echo num_neurons: $(grep 'layer=' $CONFIG_FILE | sed -n '2p' | cut -d'=' -f2)
 echo ---
 
 # COMPILACIÓ
 mpicc -O3 \
-    -DOPENMPI $FLAGS \
+    $FLAGS \
     main.c \
     common/common.c \
     configuration/config.c \
@@ -78,7 +81,7 @@ mpicc -O3 \
 for ((i=1; i<=$REPEAT; i++)); do
     echo "#START:$i"
 
-    mpirun -np $SLURM_NTASKS ./exec $CONFIG_FILE
+    mpirun -np $NP ./exec $CONFIG_FILE
 
     echo "#END:$i"
 done

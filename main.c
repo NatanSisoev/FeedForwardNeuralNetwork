@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#if defined(OPENMPI)
+#if defined(TRAIN) || defined(TEST)
 #include <mpi.h>
 #endif
 
@@ -72,7 +72,7 @@ void printRecognized(int p, layer Output) {
 void train_neural_net() {
     // printf("\nTraining...\n");
     
-    #if defined(OPENMPI) && defined(TRAIN)
+    #if defined(TRAIN)
         int rank, num_procs;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
@@ -138,7 +138,7 @@ void train_neural_net() {
             ranpat[p] = ranpat[np];
             ranpat[np] = op;
         }
-        #if defined(OPENMPI) && defined(TRAIN)
+        #if defined(TRAIN)
             for (int i = from; i < to; i++) {
                 int p = ranpat[i];
                 feed_input(p);
@@ -163,7 +163,7 @@ void train_neural_net() {
     }
 
 
-    #if defined(OPENMPI) && defined(TRAIN)
+    #if defined(TRAIN)
         for (int l = 0; l < num_layers - 1; l++) {
             long size = num_neurons[l] * num_neurons[l+1];
             MPI_Allreduce(MPI_IN_PLACE, lay[l].out_weights, size, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
@@ -177,7 +177,7 @@ void train_neural_net() {
         }
     #endif
 
-    #if defined(OPENMPI) && defined(TRAIN)
+    #if defined(TRAIN)
         double global_feed, global_forward, global_back, global_update;
 
         MPI_Reduce(&elapsed_feed_input,     &global_feed,    1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
@@ -215,7 +215,7 @@ void test_nn() {
         printf("Error!!\n");
         exit(-1);
     }
-    #if defined(OPENMPI) && defined(TEST)
+    #if defined(TEST)
         int rank, num_procs;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
@@ -229,7 +229,7 @@ void test_nn() {
     #endif
 
 
-    #if defined(OPENMPI) && defined(TEST)
+    #if defined(TEST)
         for (int i = from; i < to; i++) {
     #else
         for (int i = 0; i < num_test_patterns; i++) {
@@ -247,7 +247,7 @@ void test_nn() {
         printRecognized(i, lay[num_layers - 1]);
     }
 
-    #if defined(OPENMPI) && defined(TEST)
+    #if defined(TEST)
         int global_total = 0;
         MPI_Allreduce(&total, &global_total, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
         total = global_total;
@@ -262,7 +262,7 @@ void test_nn() {
 
 //-----------MAIN-----------//
 int main(int argc, char** argv) {
-    #if defined(OPENMPI)
+    #if defined(TRAIN) || defined(TEST)
         MPI_Init(&argc, &argv);
     #endif
 
@@ -332,7 +332,7 @@ int main(int argc, char** argv) {
 
     free(cost);
 
-    #if defined(OPENMPI)
+    #if defined(TRAIN) || defined(TEST)
         int rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         if (rank == 0) {
@@ -344,7 +344,7 @@ int main(int argc, char** argv) {
         printf(" %f sec \n", elapsed);
     #endif
 
-    #if defined(OPENMPI)
+    #if defined(TRAIN) || defined(TEST)
         MPI_Finalize();
     #endif
 
