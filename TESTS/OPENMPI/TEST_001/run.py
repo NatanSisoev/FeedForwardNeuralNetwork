@@ -10,7 +10,7 @@ import statistics
 from collections import defaultdict
 
 # SETTINGS
-SLEEP_INTERVAL = 10  # seconds
+SLEEP_INTERVAL = 1  # seconds
 DEBUG          = True
 
 # SCHEDULER ARGUMENTS
