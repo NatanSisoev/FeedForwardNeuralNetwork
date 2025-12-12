@@ -20,10 +20,11 @@
 
 #include <sys/time.h>
 
-elapsed_feed_input = 0;
-elapsed_forward_prop = 0;
-elapsed_back_prop = 0;
-elapsed_update_weights = 0;
+// Definició (només en UN fitxer)
+double elapsed_feed_input = 0.0;
+double elapsed_forward_prop = 0.0;
+double elapsed_back_prop = 0.0;
+double elapsed_update_weights = 0.0;
 
 /**
  * @brief Iniciatlitza la capa incial de la xarxa (input layer) amb l'entrada

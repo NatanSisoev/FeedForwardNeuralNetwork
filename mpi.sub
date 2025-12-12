@@ -1,0 +1,85 @@
+#!/bin/bash
+#SBATCH --job-name=MPI
+#SBATCH --ntasks=8        # no posarem SBATCH -n 12              # nombre total de cores (max 12 per node)
+#SBATCH --ntasks-per-node=8
+#SBATCH -N 1               # nombre de nodes (per si es vole executar amb més CPU's, per resoldre problemes de memòria)
+#SBATCH --partition=nodo.q
+
+#SBATCH -o /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.out
+#SBATCH -e /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.err
+
+# MÒDULS
+module add gcc/13.2.1
+module load openmpi/4.1.1
+mpirun --version
+
+# ARGUMENTS
+TEST_NUM="${1:-001}"                         # test number (per naming de fitxers)
+FLAGS_RAW="$2"                               # flags separades per comes
+REPEAT="${3:-1}"                             # nombre d'execucions
+SUBFOLDER="${4:-A}"                          # subfolder per fitxers de test
+TRAINING_FILE="${5:-training/training.c}"    # codi de training
+CONFIG_FILE="${6:-configuration/configfile.txt}"  # fitxer de configuració
+
+
+# DIRECTORI BASE
+BASE_DIR="/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode"
+
+# DIRECTORI OUTPUT
+OUTPUT_DIR="$BASE_DIR/TESTS/OPENMPI/TEST_${TEST_NUM}/OUT/$SUBFOLDER"
+OUTPUT_FILE="$OUTPUT_DIR/out_${SLURM_JOB_ID}.out"
+ERRORS_FILE="$OUTPUT_DIR/err_${SLURM_JOB_ID}.out"
+mkdir -p "$OUTPUT_DIR"
+
+# REDIRECT STDOUT / STDERR
+exec 1> "$OUTPUT_FILE"
+exec 2> "$ERRORS_FILE"
+
+# CANVI A BASE DIR
+cd "$BASE_DIR" || { echo "ERROR: Cannot enter $BASE_DIR"; exit 1; }
+
+# FLAGS PARSING
+if [ -n "$FLAGS_RAW" ]; then
+    FLAGS="-D${FLAGS_RAW//,/ -D}"   # reemplaça comes amb " -D"
+else
+    FLAGS=""
+fi
+
+# METADATA
+echo ---
+echo test_number: $TEST_NUM
+echo date: $(date "+%Y-%m-%d %H:%M:%S")
+echo job_id: $SLURM_JOB_ID
+echo output_directory: $OUTPUT_DIR
+echo output_file: out_${SLURM_JOB_ID}.out
+echo errors_file: err_${SLURM_JOB_ID}.out
+echo compilation_flags: $FLAGS
+echo number_executions: $REPEAT
+echo server: Wilma
+echo partition_file: $SLURM_JOB_PARTITION
+echo num_processes: $SLURM_NTASKS
+echo num_epochs: $(grep -m1 'num_epochs=' $CONFIG_FILE | cut -d'=' -f2)
+echo num_neurons: $(grep 'layer=' $CONFIG_FILE | sed -n '2p' | cut -d'=' -f2)
+echo ---
+
+# COMPILACIÓ
+mpicc -O3 \
+    -DOPENMPI $FLAGS \
+    main.c \
+    common/common.c \
+    configuration/config.c \
+    layer/layer.c \
+    randomizer/randomizer.c \
+    initialize/initialize.c \
+    $TRAINING_FILE \
+    -o exec \
+    -lm
+
+for ((i=1; i<=$REPEAT; i++)); do
+    echo "#START:$i"
+
+    mpirun -np $SLURM_NTASKS ./exec $CONFIG_FILE
+
+    echo "#END:$i"
+done
+

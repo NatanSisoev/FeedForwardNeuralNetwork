@@ -27,10 +27,12 @@ extern float alpha;
 extern int n;
 extern int debug;
 extern float** desired_outputs;
-double elapsed_feed_input;
-double elapsed_forward_prop;
-double elapsed_back_prop;
-double elapsed_update_weights;
+
+// Declaració amb extern (només declara, no defineix)
+extern double elapsed_feed_input;
+extern double elapsed_forward_prop;
+extern double elapsed_back_prop;
+extern double elapsed_update_weights;
 
 void feed_input(int i);
 void forward_prop();

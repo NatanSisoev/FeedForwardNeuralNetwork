@@ -5,3 +5,6 @@
 exec
 *.sqlite
 *.qdrep
+
+# Ignorar totes les carpetes OUT i el seu contingut
+**/OUT/

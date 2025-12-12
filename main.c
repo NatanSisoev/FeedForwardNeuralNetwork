@@ -21,6 +21,11 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+#if defined(OPENMPI)
+#include <mpi.h>
+#endif
+
+
 //-----------FREE INPUT------------
 void freeInput(int np, char** input) {
     for (int i = 0; i < np; i++)
@@ -66,6 +71,19 @@ void printRecognized(int p, layer Output) {
  */
 void train_neural_net() {
     // printf("\nTraining...\n");
+    
+    #if defined(OPENMPI) && defined(TRAIN)
+        int rank, num_procs;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+
+        int extra = num_training_patterns % num_procs;
+        int from  = rank * (num_training_patterns / num_procs) + ((rank < extra) ? rank : extra);
+        int to    = from + (num_training_patterns / num_procs) + ((rank < extra) ? 1 : 0);
+
+        if (debug)
+            printf("TRAIN Rank %d -> from %d to %d\n", rank, from, to);
+    #endif
 
     if ((input = loadPatternSet(num_training_patterns, dataset_training_path,
                                 1)) == NULL) {
@@ -120,21 +138,68 @@ void train_neural_net() {
             ranpat[p] = ranpat[np];
             ranpat[np] = op;
         }
-
-        for (int i = 0; i < num_training_patterns; i++) {
-            int p = ranpat[i];
-            feed_input(p);
-            forward_prop();
-            back_prop(p);
-            update_weights();
-        }
+        #if defined(OPENMPI) && defined(TRAIN)
+            for (int i = from; i < to; i++) {
+                int p = ranpat[i];
+                feed_input(p);
+                forward_prop();
+                back_prop(p);
+                update_weights();
+            }
+            if (debug == 1 && rank == 0)
+                printf("Epoch %d finished\n", it);
+            
+        #else
+            for (int i = 0; i < num_training_patterns; i++) {
+                int p = ranpat[i];
+                feed_input(p);
+                forward_prop();
+                back_prop(p);
+                update_weights();
+            }
+            if (debug == 1)
+                printf("Epoch %d finished\n", it);
+        #endif
     }
 
-    printf("TIMES:\n");
-    printf("FEED_INPUT\t%f\n", elapsed_feed_input);
-    printf("FORWARD_PROP\t%f\n", elapsed_forward_prop);
-    printf("BACK_PROP\t%f\n", elapsed_back_prop);
-    printf("UPDATE_WEIGHTS\t%f\n", elapsed_update_weights);
+
+    #if defined(OPENMPI) && defined(TRAIN)
+        for (int l = 0; l < num_layers - 1; l++) {
+            long size = num_neurons[l] * num_neurons[l+1];
+            MPI_Allreduce(MPI_IN_PLACE, lay[l].out_weights, size, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+            // Mitjana
+            for (long i = 0; i < size; i++)
+                lay[l].out_weights[i] /= num_procs;
+
+            MPI_Allreduce(MPI_IN_PLACE, lay[l].bias, num_neurons[l+1], MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+            for (int i = 0; i < num_neurons[l+1]; i++)
+                lay[l].bias[i] /= num_procs;
+        }
+    #endif
+
+    #if defined(OPENMPI) && defined(TRAIN)
+        double global_feed, global_forward, global_back, global_update;
+
+        MPI_Reduce(&elapsed_feed_input,     &global_feed,    1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&elapsed_forward_prop,   &global_forward, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&elapsed_back_prop,      &global_back,    1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&elapsed_update_weights, &global_update,  1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+
+        if (rank == 0) {
+            printf("TIMES (MPI - wall time):\n");
+            printf("FEED_INPUT      %f\n", global_feed);
+            printf("FORWARD_PROP    %f\n", global_forward);
+            printf("BACK_PROP       %f\n", global_back);
+            printf("UPDATE_WEIGHTS  %f\n", global_update);
+        }
+    #else
+        printf("TIMES:\n");
+        printf("FEED_INPUT\t%f\n", elapsed_feed_input);
+        printf("FORWARD_PROP\t%f\n", elapsed_forward_prop);
+        printf("BACK_PROP\t%f\n", elapsed_back_prop);
+        printf("UPDATE_WEIGHTS\t%f\n", elapsed_update_weights);
+    #endif
+
 
     freeInput(num_training_patterns, input);
 }
@@ -150,29 +215,57 @@ void test_nn() {
         printf("Error!!\n");
         exit(-1);
     }
+    #if defined(OPENMPI) && defined(TEST)
+        int rank, num_procs;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-    for (int i = 0; i < num_test_patterns; i++) {
+        int extra = num_test_patterns % num_procs;
+        int from  = rank * (num_test_patterns / num_procs) + ((rank < extra) ? rank : extra);
+        int to    = from + (num_test_patterns / num_procs) + ((rank < extra) ? 1 : 0);
+
+        if (debug)
+            printf("TEST Rank %d -> from %d to %d\n", rank, from, to);
+    #endif
+
+
+    #if defined(OPENMPI) && defined(TEST)
+        for (int i = from; i < to; i++) {
+    #else
+        for (int i = 0; i < num_test_patterns; i++) {
+    #endif
         for (int j = 0; j < num_neurons[0]; j++)
             lay[0].actv[j] = rSet[i][j];
         
         #if defined(OPENACC)
         #pragma acc update device(lay[0].actv[0:num_neurons[0]])
         #endif
-	    forward_prop();
+        forward_prop();
         #if defined(OPENACC)
         #pragma acc update host(lay[num_layers - 1].actv[0:num_neurons[num_layers - 1]])
         #endif
         printRecognized(i, lay[num_layers - 1]);
     }
 
-    //printf("\nTotal encerts = %d\n", total);
-    printf("%d\t", total);
-
+    #if defined(OPENMPI) && defined(TEST)
+        int global_total = 0;
+        MPI_Allreduce(&total, &global_total, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+        total = global_total;
+        if (rank == 0)
+            printf("%d\t", total);
+    #else
+        printf("%d\t", total);
+    #endif
+ 
     freeInput(num_test_patterns, rSet);
 }
 
 //-----------MAIN-----------//
 int main(int argc, char** argv) {
+    #if defined(OPENMPI)
+        MPI_Init(&argc, &argv);
+    #endif
+
     if (debug == 1)
         printf("argc = %d \n", argc);
     if (argc <= 1)
@@ -239,8 +332,21 @@ int main(int argc, char** argv) {
 
     free(cost);
 
-    // printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
-    printf(" %f sec \n", elapsed);
+    #if defined(OPENMPI)
+        int rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        if (rank == 0) {
+            // printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
+            printf(" %f sec \n", elapsed);
+        }
+    #else
+        // printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
+        printf(" %f sec \n", elapsed);
+    #endif
+
+    #if defined(OPENMPI)
+        MPI_Finalize();
+    #endif
 
     return 0;
 }
