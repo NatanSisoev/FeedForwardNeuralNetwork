@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#if defined(TRAIN) || defined(TEST)
+#if defined(TRAIN) || defined(TEST) || defined(ALL)
 #include <mpi.h>
 #endif
 
@@ -79,7 +79,7 @@ void train_neural_net() {
 
     // printf("\nTraining...\n");
     
-    #if defined(TRAIN)
+    #if defined(TRAIN) || defined(ALL)
         int rank, num_procs;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
@@ -145,7 +145,7 @@ void train_neural_net() {
             ranpat[p] = ranpat[np];
             ranpat[np] = op;
         }
-        #if defined(TRAIN)
+        #if defined(TRAIN) || defined(ALL)
             for (int i = from; i < to; i++) {
                 int p = ranpat[i];
                 feed_input(p);
@@ -170,7 +170,7 @@ void train_neural_net() {
     }
 
 
-    #if defined(TRAIN)
+    #if defined(TRAIN) || defined(ALL)
         for (int l = 0; l < num_layers - 1; l++) {
             long size = num_neurons[l] * num_neurons[l+1];
             MPI_Allreduce(MPI_IN_PLACE, lay[l].out_weights, size, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
@@ -184,7 +184,7 @@ void train_neural_net() {
         }
     #endif
 
-    #if defined(TRAIN)
+    #if defined(TRAIN) || defined(ALL)
         double global_feed, global_forward, global_back, global_update;
 
         MPI_Reduce(&elapsed_feed_input,     &global_feed,    1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
@@ -229,7 +229,7 @@ void test_nn() {
         printf("Error!!\n");
         exit(-1);
     }
-    #if defined(TEST)
+    #if defined(TEST) || defined(ALL)
         int rank, num_procs;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
@@ -243,7 +243,7 @@ void test_nn() {
     #endif
 
 
-    #if defined(TEST)
+    #if defined(TEST) || defined(ALL)
         for (int i = from; i < to; i++) {
     #else
         for (int i = 0; i < num_test_patterns; i++) {
@@ -261,7 +261,7 @@ void test_nn() {
         printRecognized(i, lay[num_layers - 1]);
     }
 
-    #if defined(TEST)
+    #if defined(TEST) || defined(ALL)
         int global_total = 0;
         MPI_Allreduce(&total, &global_total, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
         total = global_total;
@@ -281,7 +281,7 @@ void test_nn() {
 
 //-----------MAIN-----------//
 int main(int argc, char** argv) {
-    #if defined(TRAIN) || defined(TEST)
+    #if defined(TRAIN) || defined(TEST) || defined(ALL)
         MPI_Init(&argc, &argv);
         int rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);        
@@ -357,7 +357,7 @@ int main(int argc, char** argv) {
 
 
 
-    #if defined(TRAIN) || defined(TEST) 
+    #if defined(TRAIN) || defined(TEST)  || defined(ALL)
         if(rank == 0) {
             printf("TRAIN_TIME: %f sec\n", elapsed_train);
             printf("TEST_TIME: %f sec\n", elapsed_test);
