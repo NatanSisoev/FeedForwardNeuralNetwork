@@ -25,6 +25,9 @@
 #include <mpi.h>
 #endif
 
+double elapsed_train = 0.0;
+double elapsed_test = 0.0;
+
 
 //-----------FREE INPUT------------
 void freeInput(int np, char** input) {
@@ -70,6 +73,10 @@ void printRecognized(int p, layer Output) {
  *
  */
 void train_neural_net() {
+    struct timeval train_begin, train_end;
+    gettimeofday(&train_begin, 0);
+
+
     // printf("\nTraining...\n");
     
     #if defined(TRAIN)
@@ -200,12 +207,19 @@ void train_neural_net() {
         printf("UPDATE_WEIGHTS\t%f\n", elapsed_update_weights);
     #endif
 
+    gettimeofday(&train_end, 0);
+    long train_seconds = train_end.tv_sec - train_begin.tv_sec;
+    long train_microseconds = train_end.tv_usec - train_begin.tv_usec;
+    elapsed_train = train_seconds + train_microseconds * 1e-6;
 
     freeInput(num_training_patterns, input);
 }
 
 //-----------TEST THE TRAINED NETWORK------------
 void test_nn() {
+    struct timeval test_begin, test_end;
+    gettimeofday(&test_begin, 0);
+
     char** rSet;
 
     // printf("\nTesting...\n");
@@ -256,7 +270,12 @@ void test_nn() {
     #else
         printf("%d\t", total);
     #endif
- 
+    
+    gettimeofday(&test_end, 0);
+    long test_seconds = test_end.tv_sec - test_begin.tv_sec;
+    long test_microseconds = test_end.tv_usec - test_begin.tv_usec;
+    elapsed_test = test_seconds + test_microseconds * 1e-6;
+
     freeInput(num_test_patterns, rSet);
 }
 
@@ -264,6 +283,8 @@ void test_nn() {
 int main(int argc, char** argv) {
     #if defined(TRAIN) || defined(TEST)
         MPI_Init(&argc, &argv);
+        int rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);        
     #endif
 
     if (debug == 1)
@@ -302,7 +323,9 @@ int main(int argc, char** argv) {
     long seconds = end.tv_sec - begin.tv_sec;
     long microseconds = end.tv_usec - begin.tv_usec;
     double elapsed = seconds + microseconds * 1e-6;
+
     
+
     #if defined(OPENACC)
     for (int i = 0; i < num_layers; i++) {
         #pragma acc exit data delete(lay[i].actv[0:num_neurons[i]])
@@ -332,20 +355,20 @@ int main(int argc, char** argv) {
 
     free(cost);
 
-    #if defined(TRAIN) || defined(TEST)
-        int rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-        if (rank == 0) {
-            // printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
-            printf(" %f sec \n", elapsed);
-        }
-    #else
-        // printf("\n\nGoodbye! (%f sec)\n\n", elapsed);
-        printf(" %f sec \n", elapsed);
-    #endif
 
-    #if defined(TRAIN) || defined(TEST)
+
+    #if defined(TRAIN) || defined(TEST) 
+        if(rank == 0) {
+            printf("TRAIN_TIME: %f sec\n", elapsed_train);
+            printf("TEST_TIME: %f sec\n", elapsed_test);
+            printf("TOTAL_TIME: %f sec\n", elapsed);
+        }
+
         MPI_Finalize();
+    #else
+        printf("TRAIN_TIME: %f sec\n", elapsed_train);
+        printf("TEST_TIME: %f sec\n", elapsed_test);
+        printf("TOTAL_TIME: %f sec\n", elapsed);
     #endif
 
     return 0;

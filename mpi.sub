@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=MPI
-#SBATCH --ntasks=8        # no posarem SBATCH -n 12              # nombre total de cores (max 12 per node)
+#SBATCH --ntasks=8         # nombre total de cores (max 12 per node)
 #SBATCH --ntasks-per-node=8
 #SBATCH -N 1               # nombre de nodes (per si es vole executar amb més CPU's, per resoldre problemes de memòria)
 #SBATCH --partition=nodo.q
@@ -8,15 +8,16 @@
 #SBATCH -o /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.out
 #SBATCH -e /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.err
 
+module purge
+
 # MÒDULS
-#module add gcc/13.2.1
 module load openmpi/4.1.1
 mpirun --version
 
 # ARGUMENTS
 TEST_NUM="${1:-001}"                         # test number (per naming de fitxers)
 FLAGS_RAW="$2"                               # flags separades per comes
-REPEAT="${3:-1}"                             # nombre d'execucions
+REPEAT="${3:-10}"                             # nombre d'execucions
 SUBFOLDER="${4:-A}"                          # subfolder per fitxers de test
 TRAINING_FILE="${5:-training/training.c}"    # codi de training
 CONFIG_FILE="${6:-configuration/configfile.txt}"  # fitxer de configuració
@@ -80,9 +81,11 @@ mpicc -O3 \
 
 for ((i=1; i<=$REPEAT; i++)); do
     echo "#START:$i"
-
-    mpirun -np $NP ./exec $CONFIG_FILE
-
+    if [ $NP -eq 1 ]; then
+        ./exec $CONFIG_FILE
+    else
+        mpirun -np $SLURM_NTASKS ./exec $CONFIG_FILE
+    fi
     echo "#END:$i"
 done
 

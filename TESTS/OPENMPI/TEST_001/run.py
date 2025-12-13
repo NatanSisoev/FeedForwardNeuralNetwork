@@ -17,7 +17,7 @@ DEBUG          = True
 TEST_NUM    = "001"
 ROOT_DIR    = f"/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/OPENMPI/TEST_{TEST_NUM}"
 FLAGS_RAW   = ""  # determined later
-REPEAT      = "1"
+REPEAT      = "10"
 SUBFOLDER   = sys.argv[1] if len(sys.argv) > 1 else ""
 
 # CREATE NEW SUBFOLDER (IF NONE INDICATED)
@@ -43,8 +43,9 @@ if "e" in parts:
 
     # ALL FLAGS
     flags = [
-        "TRAIN",
-        "TEST"
+        "TRAIN,TEST",
+        #"TRAIN",
+        #"TEST"
     ]
 
     # JOB IDS
