@@ -29,7 +29,7 @@
 
 *Configuration: 8 tasks, 10 epochs, 1 node*
 
-| Neurons | Train (s) | Test (s) | Total (s) | Accuracy |
+| Neurons | Train (s) | Tes2nflf1FZ9snnt (s) | Total (s) | Accuracy |
 |---------|-----------|----------|-----------|----------|
 |     135 |    1.3935 |   0.0359 |    1.4299 |      914 |
 |     250 |    6.0668 |   0.0594 |    6.1267 |      915 |
