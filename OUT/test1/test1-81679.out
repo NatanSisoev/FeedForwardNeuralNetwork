@@ -1,0 +1,29 @@
+---
+date: 2026-01-14 15:02:42
+job_id: 81679
+repeat: 5
+server: Wilma
+partition: nodo.q
+nprocs: 2
+num_epochs: 100
+num_neurons: 135
+---
+>>>>>>>>>>>> 1
+RIGHT 917
+ACCUR 0.9693
+TRAIN 52.3103
+TEST  0.1157
+TOTAL 52.4260
+>>>>>>>>>>>> 2
+RIGHT 917
+ACCUR 0.9693
+TRAIN 51.4034
+TEST  0.1152
+TOTAL 51.5186
+>>>>>>>>>>>> 3
+2 total processes failed to start
+>>>>>>>>>>>> 4
+2 total processes failed to start
+>>>>>>>>>>>> 5
+2 total processes failed to start
+>>>>>>>>>>>> -

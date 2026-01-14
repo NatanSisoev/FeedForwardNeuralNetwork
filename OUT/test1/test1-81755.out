@@ -1,0 +1,41 @@
+---
+date: 2026-01-14 15:08:24
+job_id: 81755
+repeat: 5
+server: Wilma
+partition: new-nodo.q
+nprocs: 12
+num_epochs: 100
+num_neurons: 135
+---
+>>>>>>>>>>>> 1
+RIGHT 907
+ACCUR 0.9588
+TRAIN 8.8878
+TEST  0.0270
+TOTAL 8.9149
+>>>>>>>>>>>> 2
+RIGHT 907
+ACCUR 0.9588
+TRAIN 8.8016
+TEST  0.0242
+TOTAL 8.8258
+>>>>>>>>>>>> 3
+RIGHT 907
+ACCUR 0.9588
+TRAIN 9.1692
+TEST  0.0279
+TOTAL 9.1971
+>>>>>>>>>>>> 4
+RIGHT 907
+ACCUR 0.9588
+TRAIN 8.6295
+TEST  0.0234
+TOTAL 8.6528
+>>>>>>>>>>>> 5
+RIGHT 907
+ACCUR 0.9588
+TRAIN 8.8055
+TEST  0.0256
+TOTAL 8.8312
+>>>>>>>>>>>> -

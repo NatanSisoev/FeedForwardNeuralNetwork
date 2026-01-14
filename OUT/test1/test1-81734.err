@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------
+Open MPI tried to fork a new process via the "execve" system call but
+failed.  Open MPI checks many things before attempting to launch a
+child process, but nothing is perfect. This error may be indicative
+of another problem on the target host, or even something as silly as
+having specified a directory for your application. Your job will now
+abort.
+
+  Local host:        clus07
+  Working dir:       /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode
+  Application name:  ./exec
+  Error:             Text file busy
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun was unable to start the specified application as it encountered an
+error:
+
+Error code: -125
+Error name: The specified application failed to start
+Node: clus07
+
+when attempting to start process rank 0.
+--------------------------------------------------------------------------
+[clus07.hpc.local:2332839] 1 more process has sent help message help-orte-odls-default.txt / execve error
+[clus07.hpc.local:2332839] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages

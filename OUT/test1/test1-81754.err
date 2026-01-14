@@ -1,0 +1,43 @@
+--------------------------------------------------------------------------
+Open MPI tried to fork a new process via the "execve" system call but
+failed.  Open MPI checks many things before attempting to launch a
+child process, but nothing is perfect. This error may be indicative
+of another problem on the target host, or even something as silly as
+having specified a directory for your application. Your job will now
+abort.
+
+  Local host:        clus07
+  Working dir:       /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode
+  Application name:  ./exec
+  Error:             No such file or directory
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun was unable to start the specified application as it encountered an
+error:
+
+Error code: 1
+Error name: (null)
+Node: clus07
+
+when attempting to start process rank 0.
+--------------------------------------------------------------------------
+[clus07.hpc.local:2343235] 9 more processes have sent help message help-orte-odls-default.txt / execve error
+[clus07.hpc.local:2343235] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+--------------------------------------------------------------------------
+mpirun was unable to launch the specified application as it could not access
+or execute an executable:
+
+Executable: ./exec
+Node: clus07
+
+while attempting to start process rank 0.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun was unable to launch the specified application as it could not access
+or execute an executable:
+
+Executable: ./exec
+Node: clus07
+
+while attempting to start process rank 0.
+--------------------------------------------------------------------------

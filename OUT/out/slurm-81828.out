@@ -1,0 +1,18 @@
+
+---
+date: 2026-01-14 16:55:25
+job_id: 81828
+repeat: 1
+server: Wilma
+partition: nodo.q
+nprocs: 12
+num_epochs: 10
+num_neurons: 250
+---
+>>>>>>>>>>>> 1
+RIGHT 871
+ACCUR 0.9207
+TRAIN 4.4828
+TEST  0.0437
+TOTAL 4.5264
+>>>>>>>>>>>> -

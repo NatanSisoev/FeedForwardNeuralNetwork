@@ -1,0 +1,17 @@
+---
+date: 2026-01-14 16:40:22
+job_id: 81814
+repeat: 1
+server: Wilma
+partition: new-nodo.q
+nprocs: 8
+num_epochs: 10
+num_neurons: 250
+---
+>>>>>>>>>>>> 1 bias
+RIGHT 869
+ACCUR 0.9186
+TRAIN 1.6161
+TEST  0.0442
+TOTAL 1.6603
+>>>>>>>>>>>> -

@@ -1,0 +1,2 @@
+/usr/bin/ld: falló el enlace final: `handle' de fichero en desuso
+collect2: error: ld devolvió el estado de salida 1

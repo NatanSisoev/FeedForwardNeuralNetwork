@@ -1,0 +1,18 @@
+---
+date: 2026-01-14 16:08:10
+job_id: 81801
+repeat: 1
+server: Wilma
+partition: nodo.q
+nprocs: 48
+num_epochs: 10
+num_neurons: 250
+---
+>>>>>>>>>>>> 1
+
+Total encerts = 691
+
+
+Goodbye! (0.685847 sec)
+
+>>>>>>>>>>>> -
