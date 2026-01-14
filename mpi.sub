@@ -1,8 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=MPI_TEST002
-#SBATCH --ntasks=96
-#SBATCH --ntasks-per-node=8
-#SBATCH -N 12
+#SBATCH --ntasks=8
 #SBATCH --partition=nodo.q
 
 #SBATCH -o /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.out
@@ -28,21 +26,20 @@ OUTPUT_FILE="$OUTPUT_DIR/out_${SLURM_JOB_ID}.out"
 ERRORS_FILE="$OUTPUT_DIR/err_${SLURM_JOB_ID}.out"
 mkdir -p "$OUTPUT_DIR"
 
+echo $SLURM_NTASKS
+
 # REDIRECT
-exec 1> "$OUTPUT_FILE"
-exec 2> "$ERRORS_FILE"
+# exec 1> "$OUTPUT_FILE"
+# exec 2> "$ERRORS_FILE"
+
+exec 1> "out_${SLURM_JOB_ID}.out"
+exec 2> "err_${SLURM_JOB_ID}.out"
 
 # CANVI A BASE DIR
 cd "$BASE_DIR" || { echo "ERROR: Cannot enter $BASE_DIR"; exit 1; }
 
 # FLAGS
-if [ -n "$FLAGS_RAW" ]; then
-    FLAGS="-D${FLAGS_RAW//,/ -D}"
-    NP=$SLURM_NTASKS
-else
-    FLAGS=""
-    NP=1
-fi
+NP=$SLURM_NTASKS
 
 # EXTRAURE PARÀMETRES DEL CONFIG FILE
 NUM_EPOCHS=$(grep 'num_epochs=' "$CONFIG_FILE" | cut -d'=' -f2)
@@ -68,7 +65,6 @@ echo "config_file: $CONFIG_FILE"
 echo "---"
 
 # NETEJA DE FITXERS COMPILATS ANTERIORS
-echo "Cleaning previous builds..."
 rm -f exec *.o common/*.o configuration/*.o layer/*.o randomizer/*.o initialize/*.o training/*.o
 rm -rf ./*.so ./*.a
 
@@ -94,10 +90,7 @@ fi
 # EXECUCIÓ
 for ((i=1; i<=$REPEAT; i++)); do
     echo "#START:$i"
-    if [ $NP -eq 1 ]; then
-        ./exec "$CONFIG_FILE"
-    else
-        mpirun -np $SLURM_NTASKS ./exec "$CONFIG_FILE"
-    fi
+
+    mpirun -np $SLURM_NTASKS ./exec "$CONFIG_FILE"
     echo "#END:$i"
 done

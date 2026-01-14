@@ -30,6 +30,10 @@ float full_cost;
 char** input;
 int n = 1;
 int total = 0;
+int rank;
+int num_procs;
+double train_t = 0;
+double test_t = 0;
 float tcost = 0;
 
 extern int num_layers;
