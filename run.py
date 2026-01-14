@@ -13,8 +13,11 @@ parser.add_argument("--name", type=str, default="slurm")
 parser.add_argument("--nprocs", type=int, default=8)
 parser.add_argument("--partition", type=str, default="nodo.q")
 parser.add_argument("--num_epochs", type=int, default=10)
-parser.add_argument("--num_neurons", type=int, default=135)
+parser.add_argument("--num_neurons", type=int, default=250)
 parser.add_argument("--repeat", type=int, default=1)
+parser.add_argument("--open", dest="open", action="store_true")
+parser.add_argument("--no-open", dest="open", action="store_false")
+parser.set_defaults(open=True)
 args = parser.parse_args()
 
 # Change scheduler file
@@ -35,20 +38,21 @@ res = subprocess.run(
     universal_newlines=True
 )
 print(res.stdout.strip())
-job_id = re.search(r"Submitted batch job (\d+)", res.stdout.strip()).group(1)
-
-# Wait
-while True:
-    res = subprocess.run(
-        ["squeue", "-h", "-j", str(job_id), "-o", "%i", "-u", os.environ.get("USER", "capmc-1")],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True
-    )
-    if str(job_id) not in res.stdout:
-        break
-    sleep(1)
 
 # Open output file
-subprocess.run(["code", f"OUT/{args.name}-{job_id}.out"])
+if args.open:
+    job_id = re.search(r"Submitted batch job (\d+)", res.stdout.strip()).group(1)
+
+    while True:
+        res = subprocess.run(
+            ["squeue", "-h", "-j", str(job_id), "-o", "%i", "-u", os.environ.get("USER", "capmc-1")],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True
+        )
+        if str(job_id) not in res.stdout:
+            break
+        sleep(0.1)
+
+    subprocess.run(["code", f"OUT/{args.name}-{job_id}.out"])
 

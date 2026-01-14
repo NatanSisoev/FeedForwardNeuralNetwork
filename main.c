@@ -47,7 +47,7 @@ void train_neural_net() {
         exit(-1);
     }
 
-    int ranpat[num_training_patterns];
+    int *ranpat = malloc(num_training_patterns * sizeof(int));
     
     for (int it = 0; it < num_epochs; it++) {
         if (rank == 0) {
@@ -86,6 +86,7 @@ void train_neural_net() {
         }
     }
 
+    free(ranpat);
     freeInput(num_training_patterns, input);
 
     double local = MPI_Wtime() - t0;
@@ -148,7 +149,6 @@ int main(int argc, char** argv) {
     if (debug == 1)
         printf("FINISH CONFIG \n");
 
-    // Initialize the neural network module
     if (init() != SUCCESS_INIT) {
         printf("Error in Initialization...\n");
         exit(0);

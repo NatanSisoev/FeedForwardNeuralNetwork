@@ -1,15 +1,15 @@
 #!/bin/bash
-#SBATCH -o OUT/slurm-%j.out
-#SBATCH -e OUT/slurm-%j.err
-#SBATCH --ntasks=8
-#SBATCH --partition=nodo.q
+#SBATCH -o OUT/seq/seq-%j.out
+#SBATCH -e OUT/seq/seq-%j.err
+#SBATCH --ntasks=1
+#SBATCH --partition=new-nodo.q
 
 module purge
 module load openmpi/4.1.1
 
 # ARGUMENTS
 NUM_EPOCHS=${1:-10}
-NUM_NEURONS=${2:-135}
+NUM_NEURONS=${2:-250}
 REPEAT=${3:-1}
 
 # METADATA
@@ -42,7 +42,7 @@ mpicc -O3 \
 
 # EXECUCIÓ
 for ((i=1; i<=$REPEAT; i++)); do
-    echo "#START:$i"
+    echo ">>>>>>>>>>>> $i"
     mpirun -np $SLURM_NTASKS ./exec $NUM_EPOCHS $NUM_NEURONS
-    echo "#END:$i"
 done
+echo ">>>>>>>>>>>> -"
