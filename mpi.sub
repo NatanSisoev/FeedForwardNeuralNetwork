@@ -1,96 +1,48 @@
 #!/bin/bash
-#SBATCH --job-name=MPI_TEST002
+#SBATCH -o OUT/slurm-%j.out
+#SBATCH -e OUT/slurm-%j.err
 #SBATCH --ntasks=8
 #SBATCH --partition=nodo.q
-
-#SBATCH -o /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.out
-#SBATCH -e /home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT/slurm-%j.err
 
 module purge
 module load openmpi/4.1.1
 
 # ARGUMENTS
-TEST_NUM="${1:-002}"
-FLAGS_RAW="$2"
-REPEAT="${3:-1}"
-SUBFOLDER="${4:-A}"
-TRAINING_FILE="${5:-training/training.c}"
-CONFIG_FILE="${6:-configuration/configfile.txt}"
-
-# DIRECTORI BASE
-BASE_DIR="/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode"
-
-# DIRECTORI OUTPUT
-OUTPUT_DIR="$BASE_DIR/TESTS/OPENMPI/TEST_${TEST_NUM}/OUT/$SUBFOLDER"
-OUTPUT_FILE="$OUTPUT_DIR/out_${SLURM_JOB_ID}.out"
-ERRORS_FILE="$OUTPUT_DIR/err_${SLURM_JOB_ID}.out"
-mkdir -p "$OUTPUT_DIR"
-
-echo $SLURM_NTASKS
-
-# REDIRECT
-# exec 1> "$OUTPUT_FILE"
-# exec 2> "$ERRORS_FILE"
-
-exec 1> "out_${SLURM_JOB_ID}.out"
-exec 2> "err_${SLURM_JOB_ID}.out"
-
-# CANVI A BASE DIR
-cd "$BASE_DIR" || { echo "ERROR: Cannot enter $BASE_DIR"; exit 1; }
-
-# FLAGS
-NP=$SLURM_NTASKS
-
-# EXTRAURE PARÀMETRES DEL CONFIG FILE
-NUM_EPOCHS=$(grep 'num_epochs=' "$CONFIG_FILE" | cut -d'=' -f2)
-NUM_NEURONS=$(grep 'layer=' "$CONFIG_FILE" | sed -n '2p' | cut -d'=' -f2)
+NUM_EPOCHS=${1:-10}
+NUM_NEURONS=${2:-135}
+REPEAT=${3:-1}
 
 # METADATA
 echo "---"
-echo "test_number: $TEST_NUM"
 echo "date: $(date '+%Y-%m-%d %H:%M:%S')"
 echo "job_id: $SLURM_JOB_ID"
-echo "output_directory: $OUTPUT_DIR"
-echo "output_file: out_${SLURM_JOB_ID}.out"
-echo "errors_file: err_${SLURM_JOB_ID}.out"
-echo "compilation_flags: $FLAGS"
-echo "number_executions: $REPEAT"
+echo "repeat: $REPEAT"
 echo "server: Wilma"
-echo "partition_file: $SLURM_JOB_PARTITION"
-echo "num_processes: $NP"
-echo "num_nodes: $SLURM_JOB_NUM_NODES"
+echo "partition: $SLURM_JOB_PARTITION"
+echo "nprocs: $SLURM_NTASKS"
 echo "num_epochs: $NUM_EPOCHS"
 echo "num_neurons: $NUM_NEURONS"
-echo "config_file: $CONFIG_FILE"
 echo "---"
 
-# NETEJA DE FITXERS COMPILATS ANTERIORS
+# NETEJA
 rm -f exec *.o common/*.o configuration/*.o layer/*.o randomizer/*.o initialize/*.o training/*.o
 rm -rf ./*.so ./*.a
 
-
 # COMPILACIÓ
 mpicc -O3 \
-    $FLAGS \
     main.c \
     common/common.c \
     configuration/config.c \
     layer/layer.c \
     randomizer/randomizer.c \
     initialize/initialize.c \
-    $TRAINING_FILE \
+    training/training.c \
     -o exec \
     -lm
-
-if [ $? -ne 0 ]; then
-    echo "ERROR: Compilation failed"
-    exit 1
-fi
 
 # EXECUCIÓ
 for ((i=1; i<=$REPEAT; i++)); do
     echo "#START:$i"
-
-    mpirun -np $SLURM_NTASKS ./exec "$CONFIG_FILE"
+    mpirun -np $SLURM_NTASKS ./exec $NUM_EPOCHS $NUM_NEURONS
     echo "#END:$i"
 done

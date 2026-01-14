@@ -1,29 +1,13 @@
-EXEC=exec
-PROFILE=profile.nsys-rep.qdrep
-
-OUTPUT_DIR=/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/TESTS/TEST_X/OUT
-OUTFILE_PREFIX=out_
-ERRFILE_PREFIX=err_
+OUTPUT_DIR=/home/alumnos/capmc/capmc-1/Escritorio/FFNN-SourceCode/OUT
+OUTFILE_PREFIX=slurm-
+ERRFILE_PREFIX=slurm-
 
 all:
-	@jid=$$(sbatch scheduler.sub X | awk '{print $$4}'); \
+	@jid=$$(sbatch mpi.sub | awk '{print $$4}'); \
 	echo "Submitted job $$jid"; \
 	while squeue -h -j $$jid | grep -q "$$jid"; do sleep 0.2; done; \
-	f="$(OUTPUT_DIR)/$(OUTFILE_PREFIX)$$jid.out"; \
-	e="$(OUTPUT_DIR)/$(ERRFILE_PREFIX)$$jid.out"; \
-	echo "Output file path: $$f"; \
-	echo "Errors file path: $$e"; \
-	$(MAKE) clean
-
-clean:
-	rm -f $(EXEC) *.o *.out *.qdrep *.sqlite out
-
-squeue:
-	tmux new-session \; \
-		split-window -h \; \
-		select-pane -t 0 \; \
-		send-keys "watch -n 0.1 squeue" C-m \; \
-		select-pane -t 1
-
-stats:
-	nsys stats ./$(PROFILE)
+	outf="$(OUTPUT_DIR)/$(OUTFILE_PREFIX)$$jid.out"; \
+	errf="$(OUTPUT_DIR)/$(ERRFILE_PREFIX)$$jid.err"; \
+	echo "Output file: $$outf"; \
+	echo "Error file: $$errf"; \
+	code $$outf

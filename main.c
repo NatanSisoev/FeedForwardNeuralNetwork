@@ -92,7 +92,6 @@ void train_neural_net() {
     MPI_Reduce(&local, &train_t, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 }
 
-//-----------TEST THE TRAINED NETWORK------------
 void test_nn() {
     double t0 = MPI_Wtime();
 
@@ -126,7 +125,6 @@ void test_nn() {
     freeInput(num_test_patterns, rSet);
 }
 
-//-----------MAIN-----------//
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
@@ -135,10 +133,17 @@ int main(int argc, char** argv) {
 
     if (debug == 1)
         printf("argc = %d \n", argc);
-    if (argc <= 1)
-        readConfiguration("configuration/configfile.txt");
-    else
+    
+    if (argc == 2) {
         readConfiguration(argv[1]);
+    } else {
+        readConfiguration("configuration/configfile.txt");
+    }
+    
+    if (argc == 3) {
+        num_epochs = atoi(argv[1]);
+        num_neurons[1] = atoi(argv[2]);
+    }
 
     if (debug == 1)
         printf("FINISH CONFIG \n");
